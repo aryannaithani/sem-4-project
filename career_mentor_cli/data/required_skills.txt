@@ -1,0 +1,12 @@
+Python
+Statistics
+Machine Learning
+Deep Learning
+Data Engineering
+Model Deployment
+LLM Systems
+Vector Databases
+MLOps
+PyTorch
+Transformers
+Feature Engineering

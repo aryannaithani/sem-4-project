@@ -1,0 +1,8 @@
+Python
+Flask
+SQL
+Basic Machine Learning
+HTML
+CSS
+JavaScript
+REST APIs
