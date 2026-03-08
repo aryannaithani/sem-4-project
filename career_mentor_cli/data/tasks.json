@@ -1,0 +1,90 @@
+[
+  {
+    "skill": "Statistics & Probability",
+    "task": "Learn Statistics & Probability",
+    "project": "Analyse a real-world dataset (e.g. Titanic) and produce a statistical report",
+    "reason": "Statistical thinking is the backbone of every ML algorithm.",
+    "status": "completed",
+    "id": 1
+  },
+  {
+    "skill": "Machine Learning",
+    "task": "Learn Machine Learning",
+    "project": "Build a small project that uses Machine Learning",
+    "reason": "Learning Machine Learning moves you closer to your career goal.",
+    "status": "completed",
+    "id": 2
+  },
+  {
+    "skill": "Deep Learning",
+    "task": "Learn Deep Learning",
+    "project": "Build an image classifier using CNNs with PyTorch/TensorFlow",
+    "reason": "Deep learning powers the most advanced AI systems today.",
+    "status": "pending",
+    "id": 3
+  },
+  {
+    "skill": "Data Engineering",
+    "task": "Learn Data Engineering",
+    "project": "Build an ETL pipeline that ingests, cleans, and stores stock-market data",
+    "reason": "Clean, reliable data pipelines are essential for production ML.",
+    "status": "pending",
+    "id": 4
+  },
+  {
+    "skill": "Model Deployment",
+    "task": "Learn Model Deployment",
+    "project": "Deploy a sentiment-analysis model as a REST API using FastAPI + Docker",
+    "reason": "Deployment skills bridge the gap between a model and real-world impact.",
+    "status": "pending",
+    "id": 5
+  },
+  {
+    "skill": "LLM Systems",
+    "task": "Learn LLM Systems",
+    "project": "Build a RAG-based Q&A bot over your own PDF documents using LangChain",
+    "reason": "LLM orchestration is the hottest skill in the current AI job market.",
+    "status": "pending",
+    "id": 6
+  },
+  {
+    "skill": "Vector Databases",
+    "task": "Learn Vector Databases",
+    "project": "Build a semantic search engine for research papers using ChromaDB",
+    "reason": "Vector databases are the storage layer of modern AI applications.",
+    "status": "pending",
+    "id": 7
+  },
+  {
+    "skill": "MLOps",
+    "task": "Learn MLOps",
+    "project": "Set up a CI/CD pipeline for a ML model using GitHub Actions + MLflow",
+    "reason": "MLOps practices ensure models stay reliable and maintainable in production.",
+    "status": "pending",
+    "id": 8
+  },
+  {
+    "skill": "PyTorch",
+    "task": "Learn PyTorch",
+    "project": "Implement a transformer from scratch to understand self-attention",
+    "reason": "PyTorch is the dominant framework in AI research and industry.",
+    "status": "pending",
+    "id": 9
+  },
+  {
+    "skill": "Transformers",
+    "task": "Learn Transformers",
+    "project": "Fine-tune a pre-trained BERT model for a custom text classification task",
+    "reason": "Transformer architecture underpins virtually every modern LLM.",
+    "status": "pending",
+    "id": 10
+  },
+  {
+    "skill": "Feature Engineering",
+    "task": "Learn Feature Engineering",
+    "project": "Explore and engineer features on a Kaggle tabular dataset to beat a baseline",
+    "reason": "Good features often matter more than model choice in real-world ML.",
+    "status": "completed",
+    "id": 11
+  }
+]

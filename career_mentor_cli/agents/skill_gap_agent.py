@@ -5,6 +5,7 @@ Agent responsible for detecting the gap between the user's current skills
 and the skills required for their target career goal.
 
 This is the core "Gap Analysis" module of the Career Mentor pipeline.
+Also provides add_skill() to persist newly acquired skills.
 """
 
 import os
@@ -51,3 +52,26 @@ def detect_skill_gaps(user_skills: list[str], required_skills: list[str]) -> lis
     ]
 
     return gaps
+
+
+def add_skill(skill_name: str) -> bool:
+    """
+    Appends *skill_name* to skills.txt if it is not already listed
+    (case-insensitive comparison).
+
+    Returns:
+        True  — if the skill was newly added.
+        False — if it was already present (no-op).
+    """
+    existing = []
+    if os.path.exists(SKILLS_PATH):
+        with open(SKILLS_PATH, "r") as f:
+            existing = [line.strip() for line in f if line.strip()]
+
+    if skill_name.lower() in {s.lower() for s in existing}:
+        return False
+
+    with open(SKILLS_PATH, "a") as f:
+        f.write(f"\n{skill_name}")
+
+    return True
