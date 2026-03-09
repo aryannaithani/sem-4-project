@@ -80,3 +80,21 @@ Gaps List + context.txt + projects.txt ──► Gemini LLM ──► Roadmap �
 ## 🛡️ No API Key? No Problem.
 
 If `GEMINI_API_KEY` is not set, the system automatically falls back to a built-in static suggestion engine — so the CLI always produces useful output.
+
+## System Architecture
+User Input Files
+      │
+      ▼
+Goal Analyzer Agent
+      │
+      ▼
+Skill Gap Agent
+      │
+      ▼
+Task Generator Agent
+      │
+      ▼
+Gemini AI API
+      │
+      ▼
+Personalised Learning Roadmap
