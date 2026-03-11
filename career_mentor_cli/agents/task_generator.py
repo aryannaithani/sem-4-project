@@ -68,15 +68,14 @@ Generate exactly 5 personalised learning tasks. For each task provide:
 1. Task (a concise description of what to do)
 2. Skill (the specific skill to learn)
 3. Difficulty (beginner, intermediate, advanced)
-4. Reason (optional one-sentence explanation)
+4. Reason (one-sentence explanation)
 
 Use this exact format for every task (no extra prose before or after):
 
-Task <number>
-Task      : <task description>
-Skill     : <skill name>
+Task: <task description>
+Skill: <skill name>
 Difficulty: <difficulty>
-Reason    : <one-sentence explanation>
+Reason: <one-sentence explanation>
 
 Be specific, practical, and encouraging.
 """
@@ -169,14 +168,14 @@ def _parse_tasks(raw_text: str, skill_gaps: list[str]) -> list[dict]:
         task_dict: dict = {"status": "pending"}
 
         for line in lines:
-            line_lower = line.lower()
-            if line_lower.startswith("task") and ":" in line:
+            line_lower = line.lower().strip()
+            if line_lower.startswith("task:") or line_lower.startswith("task "):
                 task_dict["task"] = line.split(":", 1)[-1].strip()
-            elif line_lower.startswith("skill"):
+            elif line_lower.startswith("skill:"):
                 task_dict["skill"] = line.split(":", 1)[-1].strip()
-            elif line_lower.startswith("difficulty"):
+            elif line_lower.startswith("difficulty:"):
                 task_dict["difficulty"] = line.split(":", 1)[-1].strip()
-            elif line_lower.startswith("reason"):
+            elif line_lower.startswith("reason:"):
                 task_dict["reason"] = line.split(":", 1)[-1].strip()
 
         # Build a readable task description

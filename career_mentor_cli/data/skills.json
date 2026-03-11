@@ -1,8 +1,8 @@
 {
     "Python": "advanced",
     "Machine Learning": "intermediate",
-    "Deep Learning": "none",
+    "Deep Learning": "beginner",
     "Vector Databases": "beginner",
-    "Model Deployment": "none",
+    "Model Deployment": "beginner",
     "Data Engineering": "beginner"
 }

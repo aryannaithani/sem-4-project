@@ -36,7 +36,7 @@
     "task": "Learn Model Deployment",
     "project": "Deploy a sentiment-analysis model as a REST API using FastAPI + Docker",
     "reason": "Deployment skills bridge the gap between a model and real-world impact.",
-    "status": "pending",
+    "status": "completed",
     "id": 5
   },
   {
@@ -86,5 +86,13 @@
     "reason": "Good features often matter more than model choice in real-world ML.",
     "status": "completed",
     "id": 11
+  },
+  {
+    "skill": "Statistics & Probability",
+    "task": "Analyse a real-world dataset (e.g. Titanic) and produce a statistical report",
+    "difficulty": "beginner",
+    "reason": "Statistical thinking is the backbone of every ML algorithm.",
+    "status": "pending",
+    "id": 12
   }
 ]

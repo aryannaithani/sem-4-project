@@ -33,6 +33,7 @@ from agents.goal_analyzer   import load_required_skills
 from agents.skill_gap_agent import load_user_skills, detect_skill_gaps, add_skill
 from agents.task_generator  import generate_tasks_structured
 from agents.task_store      import load_tasks, add_tasks, complete_task, get_completed_skill, get_pending_skills
+from agents.roadmap_agent   import get_stage_info
 
 # ── Data file paths ──────────────────────────────────────────────────────────
 DATA_DIR      = os.path.join(BASE_DIR, "data")
@@ -97,10 +98,19 @@ def print_task_board(tasks: list, user_name: str = "User", goal: str = "") -> No
     
     progress_pct = int((learned_count / total_required * 100)) if total_required > 0 else 0
 
+    # Roadmap Progress
+    roadmap_info = get_stage_info(goal, user_skills)
+    current_stage = roadmap_info["current_stage"]
+    stage_progress = roadmap_info["progress_pct"]
+
     print(f"\n{DBAR}")
-    print(f"   📋  CAREER MENTOR TASK BOARD")
+    print(f"   📋  AI CAREER MENTOR")
     if user_name and user_name != "User":
         print(f"   👤  {user_name}  •  Goal: {goal}")
+    else:
+         print(f"   🎯  Goal: {goal}")
+    print(f"\n   📍  Current Stage: {current_stage}")
+    print(f"   📊  Stage Progress: {stage_progress}%")
     print(f"   📈  Career Progress: {progress_pct}%")
     print(f"{DBAR}")
 
@@ -172,8 +182,13 @@ def run_generation_pipeline(profile: dict) -> list:
     context  = load_list_file(CONTEXT_FILE)
     projects = load_list_file(PROJECTS_FILE)
 
-    print("[3/4] Detecting skill gaps...")
-    skill_gaps = detect_skill_gaps(user_skills, required_skills)
+    print("[3/4] Detecting skill gaps for current stage...")
+    roadmap_info = get_stage_info(goal, user_skills)
+    stage_skills = roadmap_info["stage_skills"]
+    
+    all_skill_gaps = detect_skill_gaps(user_skills, required_skills)
+    # Only generate tasks for skills in the current stage
+    skill_gaps = [g for g in all_skill_gaps if g.lower() in [s.lower() for s in stage_skills]]
 
     # Enforce task limit
     MAX_ACTIVE_TASKS = 5
@@ -247,11 +262,24 @@ def handle_complete(task_id_str: str, profile: dict) -> None:
 
     # ── Update skills ────────────────────────────────────────────────────────
     skill_name = get_completed_skill(completed)
+    
+    # Check current stage before upgrade
+    user_skills_before = load_user_skills()
+    stage_info_before = get_stage_info(profile["goal"], user_skills_before)
+    
     was_upgraded = add_skill(skill_name)
+    user_skills_after = load_user_skills()
+    stage_info_after = get_stage_info(profile["goal"], user_skills_after)
+
     if was_upgraded:
         print(f"📚  Skill upgraded in skills.json:  {skill_name}")
     else:
         print(f"📚  Skill level maintained: {skill_name} (no change)")
+
+    # Check for stage completion
+    if stage_info_before["current_stage"] != stage_info_after["current_stage"]:
+        print(f"\n🌟  Stage Completed: {stage_info_before['current_stage']}")
+        print(f"🔓  New Stage Unlocked: {stage_info_after['current_stage']}")
 
     print()
 

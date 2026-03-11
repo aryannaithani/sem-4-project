@@ -1,0 +1,18 @@
+{
+  "AI/ML Engineer": {
+    "Foundations": [
+      "Python",
+      "Statistics",
+      "Machine Learning"
+    ],
+    "Intermediate": [
+      "Deep Learning",
+      "Data Engineering"
+    ],
+    "Advanced": [
+      "Vector Databases",
+      "Model Deployment",
+      "LLM Systems"
+    ]
+  }
+}
