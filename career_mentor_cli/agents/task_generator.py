@@ -65,15 +65,17 @@ Existing Projects (already built by the student):
 {projects_str}
 
 Generate exactly 5 personalised learning tasks. For each task provide:
-1. Skill to Learn
-2. Hands-on Project Idea (different from existing projects, relevant to industry trends)
-3. Why this helps reach the career goal
+1. Task (a concise description of what to do)
+2. Skill (the specific skill to learn)
+3. Difficulty (beginner, intermediate, advanced)
+4. Reason (optional one-sentence explanation)
 
 Use this exact format for every task (no extra prose before or after):
 
 Task <number>
+Task      : <task description>
 Skill     : <skill name>
-Project   : <project idea>
+Difficulty: <difficulty>
 Reason    : <one-sentence explanation>
 
 Be specific, practical, and encouraging.
@@ -167,16 +169,18 @@ def _parse_tasks(raw_text: str, skill_gaps: list[str]) -> list[dict]:
         task_dict: dict = {"status": "pending"}
 
         for line in lines:
-            if line.lower().startswith("skill"):
+            line_lower = line.lower()
+            if line_lower.startswith("task") and ":" in line:
+                task_dict["task"] = line.split(":", 1)[-1].strip()
+            elif line_lower.startswith("skill"):
                 task_dict["skill"] = line.split(":", 1)[-1].strip()
-            elif line.lower().startswith("project"):
-                task_dict["project"] = line.split(":", 1)[-1].strip()
-            elif line.lower().startswith("reason"):
+            elif line_lower.startswith("difficulty"):
+                task_dict["difficulty"] = line.split(":", 1)[-1].strip()
+            elif line_lower.startswith("reason"):
                 task_dict["reason"] = line.split(":", 1)[-1].strip()
 
         # Build a readable task description
-        if "skill" in task_dict:
-            task_dict["task"] = f"Learn {task_dict['skill']}"
+        if "task" in task_dict and "skill" in task_dict:
             tasks.append(task_dict)
 
     # If parsing failed entirely, fall back to structured static suggestions
@@ -261,8 +265,9 @@ def _fallback_tasks(skill_gaps: list[str]) -> str:
 
         lines.append(
             f"Task {count}\n"
+            f"Task      : {project}\n"
             f"Skill     : {skill}\n"
-            f"Project   : {project}\n"
+            f"Difficulty: beginner\n"
             f"Reason    : {reason}\n"
         )
         count += 1
@@ -342,11 +347,11 @@ def _fallback_tasks_structured(skill_gaps: list[str]) -> list[dict]:
             reason  = f"Learning {gap} moves you closer to your career goal."
 
         tasks.append({
-            "skill":   skill,
-            "task":    f"Learn {skill}",
-            "project": project,
-            "reason":  reason,
-            "status":  "pending",
+            "skill":      skill,
+            "task":       project,
+            "difficulty": "beginner",
+            "reason":     reason,
+            "status":     "pending",
         })
 
     return tasks

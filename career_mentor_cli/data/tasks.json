@@ -20,7 +20,7 @@
     "task": "Learn Deep Learning",
     "project": "Build an image classifier using CNNs with PyTorch/TensorFlow",
     "reason": "Deep learning powers the most advanced AI systems today.",
-    "status": "pending",
+    "status": "completed",
     "id": 3
   },
   {
@@ -28,7 +28,7 @@
     "task": "Learn Data Engineering",
     "project": "Build an ETL pipeline that ingests, cleans, and stores stock-market data",
     "reason": "Clean, reliable data pipelines are essential for production ML.",
-    "status": "pending",
+    "status": "completed",
     "id": 4
   },
   {
@@ -52,7 +52,7 @@
     "task": "Learn Vector Databases",
     "project": "Build a semantic search engine for research papers using ChromaDB",
     "reason": "Vector databases are the storage layer of modern AI applications.",
-    "status": "pending",
+    "status": "completed",
     "id": 7
   },
   {

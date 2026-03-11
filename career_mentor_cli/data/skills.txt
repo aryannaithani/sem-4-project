@@ -10,3 +10,4 @@ REST APIs
 Statistics & Probability
 Machine Learning
 Feature Engineering
+Deep Learning

@@ -86,25 +86,48 @@ def load_list_file(filepath: str) -> list:
 # ── Display helpers ──────────────────────────────────────────────────────────
 
 def print_task_board(tasks: list, user_name: str = "User", goal: str = "") -> None:
-    """Renders the task board with [ ] / [X] status markers."""
+    """Renders the task board with [ ] / [X] status markers and career progress."""
+    user_skills = load_user_skills()
+    required_skills = load_required_skills()
+    
+    # Calculate career progress
+    total_required = len(required_skills)
+    learned_count = sum(1 for rs in required_skills 
+                        if user_skills.get(rs, user_skills.get(rs.lower(), "none")) != "none")
+    
+    progress_pct = int((learned_count / total_required * 100)) if total_required > 0 else 0
+
     print(f"\n{DBAR}")
     print(f"   📋  CAREER MENTOR TASK BOARD")
     if user_name and user_name != "User":
         print(f"   👤  {user_name}  •  Goal: {goal}")
+    print(f"   📈  Career Progress: {progress_pct}%")
     print(f"{DBAR}")
+
+    print("\n   Active Tasks\n")
 
     if not tasks:
         print("   (No tasks yet — run  python main.py  to generate some!)")
     else:
         for t in tasks:
-            marker = "X" if t.get("status") == "completed" else " "
-            task_id = t.get("id", "?")
-            task_text = t.get("task", "(unnamed task)")
-            print(f"   [{marker}] Task {task_id}: {task_text}")
+            if t.get("status") != "completed":
+                task_id = t.get("id", "?")
+                task_text = t.get("task", "(unnamed task)")
+                skill_text = t.get("skill", "-")
+                print(f"   [ ] Task {task_id}: {task_text}")
+                print(f"       Skill: {skill_text}\n")
+    
+    # Also show completed tasks
+    done = [t for t in tasks if t.get("status") == "completed"]
+    for t in done:
+        task_id = t.get("id", "?")
+        task_text = t.get("task", "(unnamed task)")
+        skill_text = t.get("skill", "-")
+        print(f"   [X] Task {task_id}: {task_text}")
+        print(f"       Skill: {skill_text}\n")
 
     print(DBAR)
     pending = [t for t in tasks if t.get("status") != "completed"]
-    done    = [t for t in tasks if t.get("status") == "completed"]
     print(f"   ✅  {len(done)} completed   •   ⏳  {len(pending)} pending")
     print(f"{DBAR}\n")
 
@@ -152,14 +175,22 @@ def run_generation_pipeline(profile: dict) -> list:
     print("[3/4] Detecting skill gaps...")
     skill_gaps = detect_skill_gaps(user_skills, required_skills)
 
-    # Filter out any gaps that already have a pending task so we don't
-    # generate duplicates during replanning.
-    existing_pending = get_pending_skills(load_tasks())
-    new_gaps = [g for g in skill_gaps if g.lower() not in existing_pending]
+    # Enforce task limit
+    MAX_ACTIVE_TASKS = 5
+    current_tasks = load_tasks()
+    existing_pending = [t for t in current_tasks if t.get("status") == "pending"]
+    pending_skills = {get_completed_skill(t).lower() for t in existing_pending}
+    
+    new_gaps = [g for g in skill_gaps if g.lower() not in pending_skills]
 
-    if not new_gaps:
-        print("   No new gaps to generate tasks for.\n")
-        return load_tasks()
+    slots_available = MAX_ACTIVE_TASKS - len(existing_pending)
+
+    if not new_gaps or slots_available <= 0:
+        print("   No new gaps to generate tasks for, or max tasks reached.\n")
+        return current_tasks
+
+    # Limit to available slots
+    new_gaps = new_gaps[:slots_available]
 
     print(f"[4/4] Generating tasks for {len(new_gaps)} gap(s) via AI...\n")
     new_tasks = generate_tasks_structured(
@@ -214,13 +245,13 @@ def handle_complete(task_id_str: str, profile: dict) -> None:
 
     print_task_detail(completed)
 
-    # ── Update skills.txt ────────────────────────────────────────────────────
+    # ── Update skills ────────────────────────────────────────────────────────
     skill_name = get_completed_skill(completed)
-    was_new = add_skill(skill_name)
-    if was_new:
-        print(f"📚  Skill added to skills.txt:  {skill_name}")
+    was_upgraded = add_skill(skill_name)
+    if was_upgraded:
+        print(f"📚  Skill upgraded in skills.json:  {skill_name}")
     else:
-        print(f"📚  Skill already in skills.txt: {skill_name} (no change)")
+        print(f"📚  Skill level maintained: {skill_name} (no change)")
 
     print()
 
