@@ -19,6 +19,7 @@ Dependencies:
     pip install google-generativeai
 """
 
+import json
 import os
 import sys
 
@@ -36,14 +37,77 @@ from agents.task_store      import load_tasks, add_tasks, complete_task, get_com
 from agents.roadmap_agent   import get_stage_info
 
 # ── Data file paths ──────────────────────────────────────────────────────────
-DATA_DIR      = os.path.join(BASE_DIR, "data")
-PROJECTS_FILE = os.path.join(DATA_DIR, "projects.txt")
-CONTEXT_FILE  = os.path.join(DATA_DIR, "context.txt")
-USER_FILE     = os.path.join(DATA_DIR, "user.txt")
+DATA_DIR         = os.path.join(BASE_DIR, "data")
+PROJECTS_FILE    = os.path.join(DATA_DIR, "projects.txt")
+CONTEXT_FILE     = os.path.join(DATA_DIR, "context.txt")
+USER_FILE        = os.path.join(DATA_DIR, "user.txt")
+CONFIDENCE_FILE  = os.path.join(DATA_DIR, "confidence.json")
 
 # ── Display constants ────────────────────────────────────────────────────────
 BAR  = "─" * 60
 DBAR = "═" * 60
+
+# ── Difficulty label colours (unicode badges) ─────────────────────────────────
+_DIFF_BADGE = {
+    "beginner":     "🟢 Beginner",
+    "intermediate": "🟡 Intermediate",
+    "advanced":     "🔴 Advanced",
+}
+
+
+# ── Confidence storage helpers ────────────────────────────────────────────────
+
+def load_confidence() -> dict:
+    """Loads confidence scores from data/confidence.json. Returns {} if absent."""
+    if not os.path.exists(CONFIDENCE_FILE):
+        return {}
+    try:
+        with open(CONFIDENCE_FILE, "r") as f:
+            return json.load(f)
+    except (json.JSONDecodeError, OSError):
+        return {}
+
+
+def save_confidence(data: dict) -> None:
+    """Persists confidence scores to data/confidence.json."""
+    os.makedirs(DATA_DIR, exist_ok=True)
+    with open(CONFIDENCE_FILE, "w") as f:
+        json.dump(data, f, indent=2)
+
+
+def ask_confidence(skill_name: str) -> None:
+    """
+    Optionally prompts the user for a confidence score (1-5) after completing a task.
+    Stores the result in confidence.json. Silently skips if the user presses Enter.
+    """
+    try:
+        raw = input(
+            f"\n💡 How confident are you in  '{skill_name}'?  "
+            "(1 = very low  …  5 = very high, Enter to skip): "
+        ).strip()
+    except (KeyboardInterrupt, EOFError):
+        print()
+        return
+
+    if not raw:
+        return  # user skipped
+
+    try:
+        score = int(raw)
+        if 1 <= score <= 5:
+            data = load_confidence()
+            data[skill_name] = score
+            save_confidence(data)
+            if score <= 2:
+                print(f"   📝  Got it — next tasks for '{skill_name}' will be reinforcement-focused.")
+            elif score >= 4:
+                print(f"   📝  Great confidence! Next tasks for '{skill_name}' will push further.")
+            else:
+                print(f"   📝  Confidence noted — progression will stay on track.")
+        else:
+            print("   (Score out of range — skipping.)")
+    except ValueError:
+        print("   (Not a number — skipping.)")
 
 
 # ── Generic file loaders ─────────────────────────────────────────────────────
@@ -86,16 +150,21 @@ def load_list_file(filepath: str) -> list:
 
 # ── Display helpers ──────────────────────────────────────────────────────────
 
+def _diff_badge(task: dict) -> str:
+    """Returns a readable difficulty badge string, or empty string if absent."""
+    raw = task.get("difficulty", "").lower().strip()
+    return _DIFF_BADGE.get(raw, f"⚪ {raw.capitalize()}" if raw else "")
+
+
 def print_task_board(tasks: list, user_name: str = "User", goal: str = "") -> None:
     """Renders the task board with [ ] / [X] status markers and career progress."""
     user_skills = load_user_skills()
     required_skills = load_required_skills()
-    
+
     # Calculate career progress
     total_required = len(required_skills)
-    learned_count = sum(1 for rs in required_skills 
+    learned_count = sum(1 for rs in required_skills
                         if user_skills.get(rs, user_skills.get(rs.lower(), "none")) != "none")
-    
     progress_pct = int((learned_count / total_required * 100)) if total_required > 0 else 0
 
     # Roadmap Progress
@@ -108,7 +177,7 @@ def print_task_board(tasks: list, user_name: str = "User", goal: str = "") -> No
     if user_name and user_name != "User":
         print(f"   👤  {user_name}  •  Goal: {goal}")
     else:
-         print(f"   🎯  Goal: {goal}")
+        print(f"   🎯  Goal: {goal}")
     print(f"\n   📍  Current Stage: {current_stage}")
     print(f"   📊  Stage Progress: {stage_progress}%")
     print(f"   📈  Career Progress: {progress_pct}%")
@@ -121,20 +190,31 @@ def print_task_board(tasks: list, user_name: str = "User", goal: str = "") -> No
     else:
         for t in tasks:
             if t.get("status") != "completed":
-                task_id = t.get("id", "?")
+                task_id   = t.get("id", "?")
                 task_text = t.get("task", "(unnamed task)")
-                skill_text = t.get("skill", "-")
+                skill     = t.get("skill", "-")
+                badge     = _diff_badge(t)
                 print(f"   [ ] Task {task_id}: {task_text}")
-                print(f"       Skill: {skill_text}\n")
-    
-    # Also show completed tasks
+                if badge:
+                    print(f"       Skill: {skill}  |  Difficulty: {badge}\n")
+                else:
+                    print(f"       Skill: {skill}\n")
+
+    # Completed tasks
     done = [t for t in tasks if t.get("status") == "completed"]
-    for t in done:
-        task_id = t.get("id", "?")
-        task_text = t.get("task", "(unnamed task)")
-        skill_text = t.get("skill", "-")
-        print(f"   [X] Task {task_id}: {task_text}")
-        print(f"       Skill: {skill_text}\n")
+    if done:
+        print(f"   {'─' * 54}")
+        print("   Completed Tasks\n")
+        for t in done:
+            task_id   = t.get("id", "?")
+            task_text = t.get("task", "(unnamed task)")
+            skill     = t.get("skill", "-")
+            badge     = _diff_badge(t)
+            print(f"   [X] Task {task_id}: {task_text}")
+            if badge:
+                print(f"       Skill: {skill}  |  Difficulty: {badge}\n")
+            else:
+                print(f"       Skill: {skill}\n")
 
     print(DBAR)
     pending = [t for t in tasks if t.get("status") != "completed"]
@@ -144,13 +224,15 @@ def print_task_board(tasks: list, user_name: str = "User", goal: str = "") -> No
 
 def print_task_detail(task: dict) -> None:
     """Prints the full details of a single task (used after completion)."""
+    badge = _diff_badge(task)
     print(f"\n{BAR}")
     print(f"   ✅  Task {task.get('id')} marked as COMPLETED")
     print(f"{BAR}")
-    print(f"   Skill    : {task.get('skill', '-')}")
-    print(f"   Task     : {task.get('task', '-')}")
-    print(f"   Project  : {task.get('project', '-')}")
-    print(f"   Reason   : {task.get('reason', '-')}")
+    print(f"   Skill      : {task.get('skill', '-')}")
+    if badge:
+        print(f"   Difficulty : {badge}")
+    print(f"   Task       : {task.get('task', '-')}")
+    print(f"   Reason     : {task.get('reason', '-')}")
     print(f"{BAR}\n")
 
 
@@ -178,42 +260,55 @@ def run_generation_pipeline(profile: dict) -> list:
     user_skills     = load_user_skills()
     required_skills = load_required_skills()
 
-    print("[2/4] Loading context and projects...")
-    context  = load_list_file(CONTEXT_FILE)
-    projects = load_list_file(PROJECTS_FILE)
+    print("[2/4] Loading context, projects, confidence, and completed tasks...")
+    context         = load_list_file(CONTEXT_FILE)
+    projects        = load_list_file(PROJECTS_FILE)
+    confidence_data = load_confidence()
+
+    # Collect completed task descriptions for the LLM context
+    all_current_tasks = load_tasks()
+    completed_task_texts = [
+        t.get("task", "")
+        for t in all_current_tasks
+        if t.get("status") == "completed" and t.get("task")
+    ]
 
     print("[3/4] Detecting skill gaps for current stage...")
     roadmap_info = get_stage_info(goal, user_skills)
-    stage_skills = roadmap_info["stage_skills"]
-    
+    stage_skills    = roadmap_info["stage_skills"]
+    current_stage   = roadmap_info["current_stage"]
+
     all_skill_gaps = detect_skill_gaps(user_skills, required_skills)
     # Only generate tasks for skills in the current stage
     skill_gaps = [g for g in all_skill_gaps if g.lower() in [s.lower() for s in stage_skills]]
 
     # Enforce task limit
     MAX_ACTIVE_TASKS = 5
-    current_tasks = load_tasks()
-    existing_pending = [t for t in current_tasks if t.get("status") == "pending"]
-    pending_skills = {get_completed_skill(t).lower() for t in existing_pending}
-    
+    existing_pending = [t for t in all_current_tasks if t.get("status") == "pending"]
+    pending_skills   = {get_completed_skill(t).lower() for t in existing_pending}
+
     new_gaps = [g for g in skill_gaps if g.lower() not in pending_skills]
 
     slots_available = MAX_ACTIVE_TASKS - len(existing_pending)
 
     if not new_gaps or slots_available <= 0:
         print("   No new gaps to generate tasks for, or max tasks reached.\n")
-        return current_tasks
+        return all_current_tasks
 
     # Limit to available slots
     new_gaps = new_gaps[:slots_available]
 
-    print(f"[4/4] Generating tasks for {len(new_gaps)} gap(s) via AI...\n")
+    print(f"[4/4] Generating adaptive tasks for {len(new_gaps)} gap(s) via AI...\n")
     new_tasks = generate_tasks_structured(
         skill_gaps=new_gaps,
         context=context,
         projects=projects,
         user_name=user_name,
         goal=goal,
+        skill_levels=user_skills,
+        completed_tasks=completed_task_texts,
+        current_stage=current_stage,
+        confidence_data=confidence_data,
     )
 
     all_tasks = add_tasks(new_tasks)
@@ -242,7 +337,8 @@ def handle_default(profile: dict) -> None:
 def handle_complete(task_id_str: str, profile: dict) -> None:
     """
     `python main.py complete <task_id>`
-    Marks a task complete, updates skills.txt, and triggers replanning.
+    Marks a task complete, updates skills.json, records optional confidence,
+    and triggers replanning.
     """
     # ── Validate the id argument ─────────────────────────────────────────────
     try:
@@ -262,14 +358,14 @@ def handle_complete(task_id_str: str, profile: dict) -> None:
 
     # ── Update skills ────────────────────────────────────────────────────────
     skill_name = get_completed_skill(completed)
-    
+
     # Check current stage before upgrade
-    user_skills_before = load_user_skills()
-    stage_info_before = get_stage_info(profile["goal"], user_skills_before)
-    
-    was_upgraded = add_skill(skill_name)
-    user_skills_after = load_user_skills()
-    stage_info_after = get_stage_info(profile["goal"], user_skills_after)
+    user_skills_before  = load_user_skills()
+    stage_info_before   = get_stage_info(profile["goal"], user_skills_before)
+
+    was_upgraded        = add_skill(skill_name)
+    user_skills_after   = load_user_skills()
+    stage_info_after    = get_stage_info(profile["goal"], user_skills_after)
 
     if was_upgraded:
         print(f"📚  Skill upgraded in skills.json:  {skill_name}")
@@ -280,6 +376,9 @@ def handle_complete(task_id_str: str, profile: dict) -> None:
     if stage_info_before["current_stage"] != stage_info_after["current_stage"]:
         print(f"\n🌟  Stage Completed: {stage_info_before['current_stage']}")
         print(f"🔓  New Stage Unlocked: {stage_info_after['current_stage']}")
+
+    # ── Optional confidence feedback ─────────────────────────────────────────
+    ask_confidence(skill_name)
 
     print()
 
