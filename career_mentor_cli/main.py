@@ -328,6 +328,66 @@ def run_generation_pipeline(profile: dict) -> list:
     return all_tasks
 
 
+# ── API pipeline helpers (return dicts, used by backend/app.py) ─────────────
+
+def get_current_state(profile: dict) -> dict:
+    """
+    Returns a JSON-ready snapshot of the user's profile, skills, and roadmap.
+    Used by GET /profile and GET /roadmap.
+    """
+    goal        = profile["goal"]
+    user_skills = load_user_skills()
+    required    = load_required_skills()
+
+    total_required = len(required)
+    learned_count  = sum(
+        1 for rs in required
+        if user_skills.get(rs, user_skills.get(rs.lower(), "none")) != "none"
+    )
+    career_progress = int(learned_count / total_required * 100) if total_required > 0 else 0
+
+    roadmap_info = get_stage_info(goal, user_skills)
+
+    return {
+        "name":            profile["name"],
+        "goal":            goal,
+        "skills":          user_skills,
+        "career_progress": career_progress,
+        "current_stage":   roadmap_info["current_stage"],
+        "stage_progress":  roadmap_info["progress_pct"],
+    }
+
+
+def generate_tasks_pipeline(profile: dict) -> list:
+    """
+    Runs the full generation pipeline and returns the resulting task list.
+    Used by POST /generate.
+    """
+    return run_generation_pipeline(profile)
+
+
+def complete_task_pipeline(task_id: int, profile: dict) -> dict:
+    """
+    Marks a task complete, upgrades the relevant skill, and replans.
+    Returns a dict with 'completed_task', 'updated_tasks', and 'updated_skills'.
+    Used by POST /complete/{task_id}.
+    """
+    completed = complete_task(task_id)
+    if completed is None:
+        return {"error": f"No task with id {task_id} found."}
+
+    skill_name      = get_completed_skill(completed)
+    add_skill(skill_name)
+    updated_tasks  = run_generation_pipeline(profile)
+    updated_skills = load_user_skills()
+
+    return {
+        "completed_task": completed,
+        "updated_tasks":  updated_tasks,
+        "updated_skills": updated_skills,
+    }
+
+
 # ── Command handlers ─────────────────────────────────────────────────────────
 
 def handle_default(profile: dict) -> None:
