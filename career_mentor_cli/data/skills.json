@@ -4,5 +4,8 @@
     "Deep Learning": "beginner",
     "Vector Databases": "beginner",
     "Model Deployment": "beginner",
-    "Data Engineering": "beginner"
+    "Data Engineering": "beginner",
+    "LLM Systems": "beginner",
+    "Reinforcement Learning": "beginner",
+    "JavaScript": "beginner"
 }

@@ -35,6 +35,7 @@ from agents.skill_gap_agent import load_user_skills, detect_skill_gaps, add_skil
 from agents.task_generator  import generate_tasks_structured
 from agents.task_store      import load_tasks, add_tasks, complete_task, get_completed_skill, get_pending_skills
 from agents.roadmap_agent   import get_stage_info
+from agents.github_agent    import run_github_skill_sync
 
 # ── Data file paths ──────────────────────────────────────────────────────────
 DATA_DIR         = os.path.join(BASE_DIR, "data")
@@ -114,12 +115,13 @@ def ask_confidence(skill_name: str) -> None:
 
 def load_user_profile() -> dict:
     """
-    Parses user.txt and returns a dict with 'name' and 'goal' keys.
+    Parses user.txt and returns a dict with 'name', 'goal', and 'github' keys.
     Expected format:
         Name: Aryan
         Goal: AI/ML Engineer
+        GitHub: aryan-naithani
     """
-    profile = {"name": "User", "goal": "Unknown"}
+    profile = {"name": "User", "goal": "Unknown", "github": ""}
     if not os.path.exists(USER_FILE):
         print(f"[Warning] {USER_FILE} not found. Using defaults.")
         return profile
@@ -131,6 +133,8 @@ def load_user_profile() -> dict:
                 profile["name"] = line.split(":", 1)[1].strip()
             elif line.lower().startswith("goal:"):
                 profile["goal"] = line.split(":", 1)[1].strip()
+            elif line.lower().startswith("github:"):
+                profile["github"] = line.split(":", 1)[1].strip()
 
     return profile
 
@@ -401,6 +405,10 @@ def handle_complete(task_id_str: str, profile: dict) -> None:
 
 def main() -> None:
     profile = load_user_profile()
+
+    # ── GitHub skill sync (runs on every startup, cached for 1 hour) ─────────
+    print("🔍  Analysing GitHub profile for skill updates...")
+    run_github_skill_sync()
 
     args = sys.argv[1:]   # strip the script name
 
