@@ -1,11 +1,16 @@
 {
     "Python": "advanced",
-    "Machine Learning": "intermediate",
+    "Machine Learning": "advanced",
     "Deep Learning": "beginner",
     "Vector Databases": "beginner",
-    "Model Deployment": "beginner",
+    "Model Deployment": "intermediate",
     "Data Engineering": "beginner",
-    "LLM Systems": "beginner",
+    "LLM Systems": "advanced",
     "Reinforcement Learning": "beginner",
-    "JavaScript": "beginner"
+    "JavaScript": "beginner",
+    "MLOps": "beginner",
+    "PyTorch": "beginner",
+    "Transformers": "beginner",
+    "Statistics & Probability": "intermediate",
+    "Statistics": "advanced"
 }

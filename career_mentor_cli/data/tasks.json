@@ -44,7 +44,7 @@
     "task": "Learn LLM Systems",
     "project": "Build a RAG-based Q&A bot over your own PDF documents using LangChain",
     "reason": "LLM orchestration is the hottest skill in the current AI job market.",
-    "status": "pending",
+    "status": "completed",
     "id": 6
   },
   {
@@ -60,7 +60,7 @@
     "task": "Learn MLOps",
     "project": "Set up a CI/CD pipeline for a ML model using GitHub Actions + MLflow",
     "reason": "MLOps practices ensure models stay reliable and maintainable in production.",
-    "status": "pending",
+    "status": "completed",
     "id": 8
   },
   {
@@ -68,7 +68,7 @@
     "task": "Learn PyTorch",
     "project": "Implement a transformer from scratch to understand self-attention",
     "reason": "PyTorch is the dominant framework in AI research and industry.",
-    "status": "pending",
+    "status": "completed",
     "id": 9
   },
   {
@@ -76,7 +76,7 @@
     "task": "Learn Transformers",
     "project": "Fine-tune a pre-trained BERT model for a custom text classification task",
     "reason": "Transformer architecture underpins virtually every modern LLM.",
-    "status": "pending",
+    "status": "completed",
     "id": 10
   },
   {
@@ -92,7 +92,127 @@
     "task": "Analyse a real-world dataset (e.g. Titanic) and produce a statistical report",
     "difficulty": "beginner",
     "reason": "Statistical thinking is the backbone of every ML algorithm.",
-    "status": "pending",
+    "status": "completed",
     "id": 12
+  },
+  {
+    "skill": "Statistics & Probability",
+    "task": "Analyse the Titanic dataset: compute summary statistics, visualise distributions, and run a \u03c7\u00b2 test",
+    "difficulty": "beginner",
+    "reason": "Statistical foundations are essential before tackling any ML algorithm.",
+    "status": "completed",
+    "id": 13
+  },
+  {
+    "skill": "Machine Learning",
+    "task": "Build a real-world advanced-level project that demonstrates practical mastery of Machine Learning",
+    "difficulty": "advanced",
+    "reason": "Hands-on practice at the advanced level advances your journey towards Machine Learning mastery.",
+    "status": "completed",
+    "id": 14
+  },
+  {
+    "status": "completed",
+    "task": "Develop a Python script that simulates data from different underlying distributions (e.g., Bernoulli, Uniform, Exponential) and then repeatedly samples from these populations to demonstrate and visually explain the Central Limit Theorem, showing how the distribution of sample means approaches a normal distribution regardless of the original data's distribution.",
+    "skill": "Statistics",
+    "difficulty": "beginner",
+    "reason": "This hands-on simulation reinforces foundational statistical concepts of sampling distributions and the Central Limit Theorem, crucial for understanding inferential statistics, confidence intervals, and various model assumptions in ML, building on previous exposure to data analysis.",
+    "id": 15
+  },
+  {
+    "status": "completed",
+    "task": "Containerize a pre-trained advanced Machine Learning model (e.g., a multi-label image classifier or a complex NLP model), develop a production-ready RESTful API using FastAPI or Flask to serve real-time predictions, and deploy it to a cloud platform like AWS Sagemaker Endpoints or Google Cloud Run, ensuring basic monitoring and auto-scaling capabilities.",
+    "skill": "Model Deployment",
+    "difficulty": "intermediate",
+    "reason": "This task moves beyond basic model deployment by requiring containerization, robust API development, and cloud-native scaling/monitoring, essential skills for an AI/ML Engineer deploying production systems.",
+    "id": 16
+  },
+  {
+    "status": "completed",
+    "task": "Design and implement an advanced RAG (Retrieval Augmented Generation) system capable of answering complex, multi-hop questions over a private document corpus. Integrate techniques like query re-writing, hybrid search (keyword + semantic), and a re-ranking mechanism (e.g., using a cross-encoder). Develop a custom evaluation benchmark with a mix of factual and reasoning-based questions, and quantitatively measure the system's precision, recall, and relevance, justifying the choice of LLM and embedding models.",
+    "skill": "LLM Systems",
+    "difficulty": "advanced",
+    "reason": "Building on intermediate LLM understanding, this advanced project focuses on critical architectural patterns and evaluation methodologies for robust, production-grade LLM applications.",
+    "id": 17
+  },
+  {
+    "status": "pending",
+    "task": "Build a contextual search and recommendation system for a large dataset (e.g., scientific papers, product catalog) by integrating a self-hosted (e.g., Qdrant, Milvus) or managed (e.g., Pinecone, Weaviate) vector database. Your implementation should explore different embedding models (e.g., Sentence Transformers, custom fine-tuned) for ingestion, optimize indexing parameters, and develop an API that supports similarity search with metadata filtering and allows for comparing performance metrics across different configurations.",
+    "skill": "Vector Databases",
+    "difficulty": "intermediate",
+    "reason": "This task moves beyond basic usage by requiring practical implementation, optimization, and performance comparison of vector database integrations for real-world applications.",
+    "id": 18
+  },
+  {
+    "status": "pending",
+    "task": "Refactor the core prediction logic of your 'AI Learning Assistant' project into a production-ready RESTful API using FastAPI, containerize it using Docker, and deploy it to a cloud platform (e.g., Heroku free tier, Google Cloud Run) for real-time inference. Implement basic API key authentication for access control.",
+    "skill": "Model Deployment",
+    "difficulty": "intermediate",
+    "reason": "This task builds upon your foundational understanding of model deployment and existing ML projects, providing practical experience in creating robust, scalable, and secure real-time inference endpoints, crucial for an AI/ML Engineer role.",
+    "id": 19
+  },
+  {
+    "status": "pending",
+    "task": "Design and implement an advanced RAG (Retrieval Augmented Generation) system that integrates an LLM with a vector database (e.g., Pinecone, Weaviate, ChromaDB) to answer complex queries over a private document corpus. Extend this with an agentic workflow using a framework like LangChain or LlamaIndex, allowing the agent to use custom tools (e.g., web search, API calls) in addition to retrieval, and implement a qualitative/quantitative evaluation pipeline for hallucination detection and answer relevance.",
+    "skill": "LLM Systems",
+    "difficulty": "advanced",
+    "reason": "This task elevates your intermediate LLM knowledge by building a sophisticated RAG system with agentic capabilities and robust evaluation, demonstrating advanced proficiency in building intelligent conversational AI applications and addressing key industry trends.",
+    "id": 20
+  },
+  {
+    "status": "pending",
+    "task": "Develop a web-based semantic search and Q&A application for a domain-specific dataset (e.g., academic papers, product documentation). Use a self-hosted or cloud-managed vector database (e.g., Milvus, Qdrant, Pinecone) to store embeddings generated from a suitable pre-trained embedding model (e.g., Sentence-BERT), and implement functionalities for document ingestion, semantic similarity search, and a simple LLM-powered Q&A interface over the retrieved context.",
+    "skill": "Vector Databases",
+    "difficulty": "intermediate",
+    "reason": "This task transforms your foundational understanding of vector databases into practical application by building a functional semantic search and Q&A system, directly supporting advanced LLM applications like RAG and improving data retrieval expertise.",
+    "id": 21
+  },
+  {
+    "status": "pending",
+    "task": "Build a production-ready API for a pre-trained machine learning model (e.g., a sentiment analysis or image classification model). Containerize the model using Docker, create a robust RESTful API with FastAPI or Flask, and deploy it to a cloud platform like AWS EC2/ECS or Google Cloud Run, implementing basic CI/CD for updates and monitoring.",
+    "skill": "Model Deployment",
+    "difficulty": "intermediate",
+    "reason": "This task moves beyond theoretical learning of deployment to practical implementation, combining containerization, API development, cloud hosting, and basic MLOps practices, which are crucial for an AI/ML Engineer.",
+    "id": 22
+  },
+  {
+    "status": "pending",
+    "task": "Design and implement an advanced Retrieval Augmented Generation (RAG) system capable of answering complex queries over a specialized, proprietary dataset (e.g., financial reports or medical research papers). The solution must incorporate advanced retrieval techniques (e.g., multi-stage retrieval, re-ranking with cross-encoders), demonstrate prompt engineering for robust responses, and include a mechanism for evaluating the quality and relevance of generated answers, finally deploying it as a scalable web application.",
+    "skill": "LLM Systems",
+    "difficulty": "advanced",
+    "reason": "Building on intermediate LLM knowledge and previous AI assistant projects, this challenges Aryan to tackle real-world RAG complexities, integrating advanced techniques, evaluation, and deployment, which are critical for current AI applications.",
+    "id": 23
+  },
+  {
+    "status": "pending",
+    "task": "Develop a scalable semantic search engine for a large corpus of text documents (e.g., news articles, product descriptions). Implement an ETL pipeline to embed documents using a Transformer model and ingest them into a cloud-based vector database (e.g., Pinecone, Weaviate, Qdrant). Design and build a search API that performs efficient similarity queries, and critically evaluate different vector indexing strategies for performance and recall.",
+    "skill": "Vector Databases",
+    "difficulty": "intermediate",
+    "reason": "This moves beyond basic understanding to hands-on application, requiring Aryan to build a robust system, manage data pipelines, and analyze the performance implications of different vector database configurations, directly supporting advanced LLM system development.",
+    "id": 24
+  },
+  {
+    "status": "pending",
+    "task": "Deploy a custom-trained ML model (from Aryan's \"advanced-level project that demonstrates practical mastery of Machine Learning\") as a scalable, containerized microservice API endpoint using Docker and a cloud platform (e.g., AWS ECS/EC2, GCP Cloud Run, Azure Container Apps). Implement basic API authentication, integrate a health check endpoint, and set up fundamental monitoring metrics (e.g., latency, error rates) for the deployed service.",
+    "skill": "Model Deployment",
+    "difficulty": "intermediate",
+    "reason": "This task builds upon foundational model deployment knowledge by requiring practical application of containerization, cloud deployment, and basic MLOps practices like authentication and monitoring, directly advancing his ability to deploy scalable AI applications.",
+    "id": 25
+  },
+  {
+    "status": "pending",
+    "task": "Design and implement a multi-document, advanced Retrieval-Augmented Generation (RAG) system for a specific domain (e.g., legal documents, scientific papers). This system must incorporate multiple retrieval strategies (e.g., semantic search with a vector database, keyword search with BM25), a re-ranking module using a cross-encoder model, and an agentic query router that directs complex user questions to specialized sub-LLM chains or external tools. Develop a systematic evaluation pipeline for response quality, hallucination, and relevance using both automated metrics and human-in-the-loop validation.",
+    "skill": "LLM Systems",
+    "difficulty": "advanced",
+    "reason": "This task moves beyond basic LLM interaction by integrating sophisticated RAG techniques, agentic principles, and rigorous evaluation, which are critical for developing robust, intelligent, and production-ready LLM-powered applications.",
+    "id": 26
+  },
+  {
+    "status": "pending",
+    "task": "Enhance an existing project (like the \"AI Learning Assistant\") or build a new intelligent search application by integrating a managed vector database service (e.g., Pinecone, Weaviate, Qdrant, Milvus Cloud). Implement a robust data ingestion pipeline to chunk, embed (using a suitable embedding model like `all-MiniLM-L6-v2` or `OpenAI Embeddings`), and store textual content from various sources into the vector database. Develop and evaluate efficient query strategies to retrieve relevant information based on semantic similarity, demonstrating how different indexing parameters or search algorithms impact retrieval performance.",
+    "skill": "Vector Databases",
+    "difficulty": "intermediate",
+    "reason": "This task progresses beyond theoretical understanding by requiring practical integration of a managed vector database into an application, focusing on real-world data ingestion, embedding, and efficient semantic search for RAG systems, while also considering performance implications.",
+    "id": 27
   }
 ]
