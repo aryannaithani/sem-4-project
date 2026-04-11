@@ -36,6 +36,7 @@ from agents.task_generator  import generate_tasks_structured
 from agents.task_store      import load_tasks, add_tasks, complete_task, get_completed_skill, get_pending_skills
 from agents.roadmap_agent   import get_stage_info
 from agents.github_agent    import run_github_skill_sync
+from agents.trend_collector import run_trend_update, load_trends
 
 # ── Data file paths ──────────────────────────────────────────────────────────
 DATA_DIR         = os.path.join(BASE_DIR, "data")
@@ -269,6 +270,14 @@ def run_generation_pipeline(profile: dict) -> list:
     projects        = load_list_file(PROJECTS_FILE)
     confidence_data = load_confidence()
 
+    # Merge live trends into context (dedup, trends first)
+    live_trends = load_trends()
+    seen = set(c.lower() for c in context)
+    for trend in live_trends:
+        if trend.lower() not in seen:
+            context.append(trend)
+            seen.add(trend.lower())
+
     # Collect completed task descriptions for the LLM context
     all_current_tasks = load_tasks()
     completed_task_texts = [
@@ -409,6 +418,10 @@ def main() -> None:
     # ── GitHub skill sync (runs on every startup, cached for 1 hour) ─────────
     print("🔍  Analysing GitHub profile for skill updates...")
     run_github_skill_sync()
+
+    # ── Industry trend update (runs on every startup, cached for 24 hours) ───
+    print("📈  Checking industry trends...")
+    run_trend_update()
 
     args = sys.argv[1:]   # strip the script name
 
