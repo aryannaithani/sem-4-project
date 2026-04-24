@@ -69,8 +69,8 @@ const TaskBoard = () => {
     const completedTasks = tasks.filter(t => t.status === 'completed');
 
     return (
-        <div className="p-8 max-w-7xl mx-auto w-full animate-fade-up flex flex-col h-full h-screen">
-            <header className="mb-8 flex flex-col md:flex-row md:justify-between md:items-end gap-4 shrink-0">
+        <div className="py-8 px-4 md:px-8 max-w-7xl mx-auto w-full animate-fade-up flex flex-col min-h-full">
+            <header className="mb-8 flex flex-col xl:flex-row xl:justify-between xl:items-end gap-6 shrink-0">
                 <div>
                     <h1 className="text-3xl font-extrabold text-white mb-2 flex items-center gap-3">
                         <Layout className="text-violet-500" size={32} />
@@ -79,18 +79,18 @@ const TaskBoard = () => {
                     <p className="text-slate-400">Complete project-based tasks to build your real-world readiness.</p>
                 </div>
 
-                <div className="flex flex-col sm:flex-row items-center gap-4">
-                    <div className="flex bg-white/5 p-1 rounded-lg border border-white/5">
-                        <button onClick={() => setFilter('all')} className={clsx("px-4 py-1.5 rounded-md text-sm font-medium transition-all", filter === 'all' ? "bg-white/10 text-white shadow-sm" : "text-slate-400 hover:text-slate-200")}>All</button>
-                        <button onClick={() => setFilter('beginner')} className={clsx("px-4 py-1.5 rounded-md text-sm font-medium transition-all", filter === 'beginner' ? "bg-emerald-500/20 text-emerald-400 shadow-sm" : "text-slate-400 hover:text-slate-200")}>Beginner</button>
-                        <button onClick={() => setFilter('intermediate')} className={clsx("px-4 py-1.5 rounded-md text-sm font-medium transition-all", filter === 'intermediate' ? "bg-orange-500/20 text-orange-400 shadow-sm" : "text-slate-400 hover:text-slate-200")}>Intermediate</button>
-                        <button onClick={() => setFilter('advanced')} className={clsx("px-4 py-1.5 rounded-md text-sm font-medium transition-all", filter === 'advanced' ? "bg-red-500/20 text-red-400 shadow-sm" : "text-slate-400 hover:text-slate-200")}>Advanced</button>
+                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 w-full xl:w-auto overflow-x-auto pb-2 sm:pb-0">
+                    <div className="flex bg-black/40 p-1.5 rounded-xl border border-white/5 shadow-inner gap-1 shrink-0">
+                        <button onClick={() => setFilter('all')} className={clsx("px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200", filter === 'all' ? "bg-white/10 text-white shadow-sm border border-white/5" : "text-slate-400 hover:text-slate-200 hover:bg-white/5")}>All</button>
+                        <button onClick={() => setFilter('beginner')} className={clsx("px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200", filter === 'beginner' ? "bg-emerald-500/20 text-emerald-400 shadow-sm border border-emerald-500/10" : "text-slate-400 hover:text-slate-200 hover:bg-white/5")}>Beginner</button>
+                        <button onClick={() => setFilter('intermediate')} className={clsx("px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200", filter === 'intermediate' ? "bg-orange-500/20 text-orange-400 shadow-sm border border-orange-500/10" : "text-slate-400 hover:text-slate-200 hover:bg-white/5")}>Intermediate</button>
+                        <button onClick={() => setFilter('advanced')} className={clsx("px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200", filter === 'advanced' ? "bg-red-500/20 text-red-400 shadow-sm border border-red-500/10" : "text-slate-400 hover:text-slate-200 hover:bg-white/5")}>Advanced</button>
                     </div>
 
                     <button
                         onClick={handleGenerate}
                         disabled={generating}
-                        className="btn btn-primary shadow-glow"
+                        className="btn btn-primary shadow-glow shrink-0 w-full sm:w-auto justify-center"
                     >
                         {generating ? <RefreshCw className="animate-spin" size={18} /> : <Zap size={18} />}
                         <span>{generating ? 'Generating...' : 'Generate AI Tasks'}</span>
@@ -98,10 +98,10 @@ const TaskBoard = () => {
                 </div>
             </header>
 
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 flex-1 min-h-0 pb-6 stagger">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 flex-1 min-h-0 stagger pb-8">
 
                 {/* Pending Tasks Column */}
-                <div className="flex flex-col bg-bg-surface rounded-2xl border border-white/5 overflow-hidden shadow-lg h-full">
+                <div className="flex flex-col bg-[#0d1117]/80 rounded-2xl border border-white/5 overflow-hidden shadow-xl lg:h-[calc(100vh-14rem)]">
                     <div className="p-4 border-b border-white/5 bg-black/20 flex justify-between items-center backdrop-blur-md">
                         <h2 className="text-sm font-bold uppercase tracking-wider text-slate-300">Pending Execution</h2>
                         <span className="bg-violet-500/20 text-violet-400 text-xs px-2.5 py-0.5 rounded-full font-bold border border-violet-500/30">
@@ -170,7 +170,7 @@ const TaskBoard = () => {
                 </div>
 
                 {/* Completed Tasks Column */}
-                <div className="flex flex-col bg-bg-surface rounded-2xl border border-white/5 overflow-hidden shadow-lg h-full">
+                <div className="flex flex-col bg-[#0d1117]/80 rounded-2xl border border-white/5 overflow-hidden shadow-xl lg:h-[calc(100vh-14rem)]">
                     <div className="p-4 border-b border-white/5 bg-black/20 flex justify-between items-center backdrop-blur-md">
                         <h2 className="text-sm font-bold uppercase tracking-wider text-slate-300">Completed</h2>
                         <span className="bg-emerald-500/20 text-emerald-400 text-xs px-2.5 py-0.5 rounded-full font-bold border border-emerald-500/30">

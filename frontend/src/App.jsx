@@ -23,10 +23,12 @@ function App() {
   };
 
   return (
-    <div style={{ display: 'flex', height: '100vh', overflow: 'hidden', background: 'var(--bg-base)' }}>
+    <div className="flex h-screen w-full overflow-hidden" style={{ background: 'var(--bg-base)' }}>
       <Sidebar currentView={currentView} setCurrentView={setCurrentView} />
-      <main style={{ flex: 1, overflowY: 'auto' }} className="scroll-area">
-        {renderView()}
+      <main className="flex-1 min-w-0 h-full overflow-y-auto scroll-area relative">
+        <div className="w-full min-h-full">
+          {renderView()}
+        </div>
       </main>
     </div>
   );

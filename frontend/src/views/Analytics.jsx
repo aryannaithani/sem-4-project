@@ -15,14 +15,26 @@ const Analytics = () => {
 
     if (loading) {
         return (
-            <div className="p-8 w-full h-full flex justify-center items-center">
-                <div className="w-10 h-10 border-4 border-violet-500 border-t-transparent rounded-full animate-spin"></div>
+            <div className="p-4 md:p-8 w-full h-full flex flex-col justify-center items-center gap-4">
+                <div className="w-12 h-12 border-4 border-white/10 border-t-violet-500 rounded-full animate-spin shadow-[0_0_15px_rgba(124,58,237,0.5)]"></div>
+                <div className="text-slate-400 font-medium animate-pulse">Loading analytics...</div>
             </div>
         );
     }
 
     if (!analytics) {
-        return <div className="p-8 text-center text-slate-500">Could not load analytics.</div>;
+        return (
+            <div className="p-4 md:p-8 w-full h-full flex justify-center items-center">
+                <div className="card max-w-md w-full p-8 text-center shadow-2xl border-white/10">
+                    <div className="w-16 h-16 bg-red-500/10 rounded-full flex items-center justify-center mx-auto mb-4 border border-red-500/20 text-red-400">
+                        <AlertCircle size={28} />
+                    </div>
+                    <h2 className="text-xl font-bold text-white mb-2">Analytics Unavailable</h2>
+                    <p className="text-slate-400 text-sm mb-6">Could not retrieve analytics. Ensure the backend is active.</p>
+                    <button onClick={() => window.location.reload()} className="btn btn-secondary w-full justify-center">Try Again</button>
+                </div>
+            </div>
+        );
     }
 
     // Prepare history data for simple SVG chart

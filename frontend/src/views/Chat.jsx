@@ -61,8 +61,8 @@ const Chat = () => {
     };
 
     return (
-        <div className="w-full h-full max-h-screen flex flex-col pt-8 px-8 pb-4 animate-fade-in max-w-6xl mx-auto">
-            <header className="flex justify-between items-end mb-6 shrink-0">
+        <div className="w-full h-full max-h-[100vh] flex flex-col py-8 px-4 md:px-8 mx-auto max-w-5xl animate-fade-in relative z-10">
+            <header className="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-6 shrink-0 gap-4">
                 <div>
                     <h1 className="text-3xl font-extrabold text-white mb-2 flex items-center gap-3">
                         <Bot className="text-violet-500" size={32} />
@@ -72,14 +72,14 @@ const Chat = () => {
                 </div>
                 <button
                     onClick={handleClear}
-                    className="flex items-center gap-2 text-xs font-bold text-slate-500 hover:text-red-400 transition-colors uppercase tracking-wider"
+                    className="btn btn-ghost border border-white/5 hover:bg-red-500/10 text-red-400 hover:text-red-300 transition-colors uppercase tracking-wider text-xs font-bold"
                 >
                     <Trash2 size={16} /> Clear History
                 </button>
             </header>
 
-            <div className="flex-1 card overflow-hidden flex flex-col shadow-lg border-white/5 relative">
-                <div className="flex-1 overflow-y-auto p-6 space-y-6 scroll-area">
+            <div className="flex-1 overflow-hidden flex flex-col bg-[#0d1117]/90 rounded-2xl shadow-xl border border-white/5 backdrop-blur-xl relative">
+                <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-6 scroll-area">
                     {messages.map((m, idx) => {
                         const isUser = m.role === 'user';
                         return (
@@ -144,30 +144,32 @@ const Chat = () => {
                     </div>
                 )}
 
-                <div className="p-4 border-t border-white/5 bg-black/20 shrink-0">
+                <div className="p-4 sm:p-5 border-t border-white/5 bg-black/40 shrink-0">
                     <form
                         onSubmit={(e) => { e.preventDefault(); handleSend(); }}
-                        className="flex gap-4 relative"
+                        className="flex gap-4 relative w-full items-center"
                     >
-                        <input
-                            type="text"
-                            value={input}
-                            autoFocus
-                            onChange={(e) => setInput(e.target.value)}
-                            placeholder="Message your mentor..."
-                            className="input bg-[#111827] border-white/10 focus:border-violet-500/50 py-3 pl-4 pr-14 flex-1 shadow-inner text-base"
-                            disabled={loading}
-                        />
-                        <button
-                            type="submit"
-                            disabled={!input.trim() || loading}
-                            className={clsx(
-                                "absolute right-2 top-2 bottom-2 w-10 flex items-center justify-center rounded-lg transition-all",
-                                input.trim() && !loading ? "bg-violet-600 text-white shadow-glow hover:bg-violet-500" : "bg-white/5 text-slate-500 cursor-not-allowed"
-                            )}
-                        >
-                            <Send size={18} className={input.trim() ? "ml-1" : ""} />
-                        </button>
+                        <div className="relative flex-1 group">
+                            <input
+                                type="text"
+                                value={input}
+                                autoFocus
+                                onChange={(e) => setInput(e.target.value)}
+                                placeholder="Message your mentor..."
+                                className="w-full bg-[#1e293b]/50 border border-white/10 rounded-xl focus:border-violet-500 focus:bg-[#1e293b]/80 focus:ring-1 focus:ring-violet-500 py-4 pl-5 pr-14 shadow-inner text-[15px] text-white transition-all outline-none"
+                                disabled={loading}
+                            />
+                            <button
+                                type="submit"
+                                disabled={!input.trim() || loading}
+                                className={clsx(
+                                    "absolute right-2 top-2 bottom-2 w-10 sm:w-12 flex items-center justify-center rounded-lg transition-all",
+                                    input.trim() && !loading ? "bg-violet-600 text-white shadow-glow hover:bg-violet-500" : "bg-white/5 text-slate-500 opacity-50 cursor-not-allowed"
+                                )}
+                            >
+                                <Send size={18} className={input.trim() ? "ml-0.5" : ""} />
+                            </button>
+                        </div>
                     </form>
                 </div>
             </div>

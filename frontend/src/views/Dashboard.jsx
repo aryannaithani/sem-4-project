@@ -28,18 +28,33 @@ const Dashboard = ({ setCurrentView }) => {
 
     if (loading) {
         return (
-            <div className="p-8 w-full h-full flex justify-center items-center">
-                <div className="w-10 h-10 border-4 border-violet-500 border-t-transparent rounded-full animate-spin"></div>
+            <div className="p-4 md:p-8 w-full h-full flex flex-col justify-center items-center gap-4">
+                <div className="w-12 h-12 border-4 border-white/10 border-t-violet-500 rounded-full animate-spin shadow-[0_0_15px_rgba(124,58,237,0.5)]"></div>
+                <div className="text-slate-400 font-medium animate-pulse">Loading dashboard...</div>
             </div>
         );
     }
 
     if (!profile) {
-        return <div className="p-8 text-center text-slate-500">Could not load dashboard data.</div>;
+        return (
+            <div className="p-4 md:p-8 w-full h-full flex justify-center items-center">
+                <div className="card max-w-md w-full p-8 text-center shadow-2xl border-white/10 relative overflow-hidden">
+                    <div className="absolute inset-0 bg-gradient-to-br from-red-500/5 to-orange-500/5 z-0 pointer-events-none"></div>
+                    <div className="relative z-10">
+                        <div className="w-16 h-16 bg-red-500/10 rounded-full flex items-center justify-center mx-auto mb-4 border border-red-500/20 text-red-400">
+                            <Target size={28} />
+                        </div>
+                        <h2 className="text-xl font-bold text-white mb-2">Data Unavailable</h2>
+                        <p className="text-slate-400 text-sm mb-6">We couldn't connect to the mentor backend. Ensure the FastAPI server is running.</p>
+                        <button onClick={() => window.location.reload()} className="btn btn-secondary w-full justify-center">Try Again</button>
+                    </div>
+                </div>
+            </div>
+        );
     }
 
     return (
-        <div className="p-8 max-w-6xl mx-auto w-full animate-fade-up">
+        <div className="py-8 px-4 md:px-8 max-w-6xl mx-auto w-full animate-fade-up">
             <header className="mb-10 flex justify-between items-end">
                 <div>
                     <h1 className="text-3xl font-extrabold text-white mb-2">Welcome back, <span className="gradient-text">{profile.name}</span></h1>
