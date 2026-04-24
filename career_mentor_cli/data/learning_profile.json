@@ -1,0 +1,17 @@
+{
+  "last_updated": "2026-04-24T18:08:43.758158+00:00",
+  "total_tasks_completed": 17,
+  "sessions": [
+    {
+      "date": "2026-04-24",
+      "tasks_completed": 17
+    }
+  ],
+  "skill_confidence_history": {},
+  "consistency_score": 7,
+  "learning_velocity": 2.43,
+  "avg_task_completion_days": 0.0,
+  "project_complexity_index": 42,
+  "strengths": [],
+  "weak_areas": []
+}

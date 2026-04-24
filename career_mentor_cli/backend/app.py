@@ -1,10 +1,21 @@
 """
 backend/app.py
 --------------
-FastAPI application that exposes the AI Career Mentor functionality as a REST API.
+Full-scale FastAPI backend for the AI Career Mentor.
 
-All heavy logic is delegated to the existing agents and pipeline functions in
-main.py.  No business logic is duplicated here.
+Endpoints:
+  GET  /profile              — user profile, skills, career progress
+  GET  /tasks                — all tasks
+  POST /generate             — generate new tasks
+  POST /complete/{task_id}   — complete a task and replan
+  GET  /roadmap              — current stage progress (legacy)
+  GET  /roadmap/full         — full multi-stage roadmap with all skills
+  GET  /trends               — enriched trend feed with relevance
+  GET  /analytics            — real-world readiness, trajectory, depth
+  GET  /learning-profile     — digital twin data (pace, velocity, etc.)
+  POST /mentor/chat          — conversational AI mentor
+  POST /mentor/clear         — clear mentor conversation history
+  POST /profile/update       — update user name / goal / github
 
 Run with:
     cd career_mentor_cli
@@ -14,18 +25,14 @@ Run with:
 import os
 import sys
 
-# ---------------------------------------------------------------------------
-# Ensure career_mentor_cli root is on sys.path so that the existing agent
-# imports (and main.py pipeline functions) resolve correctly when uvicorn
-# starts from the career_mentor_cli directory.
-# ---------------------------------------------------------------------------
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, BASE_DIR)
 
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel
 
-# ── Import shared pipeline functions from main.py ────────────────────────────
+# ── Pipeline imports from main.py ─────────────────────────────────────────────
 from main import (
     load_user_profile,
     get_current_state,
@@ -33,22 +40,25 @@ from main import (
     complete_task_pipeline,
 )
 
-# ── Import agents used directly by some endpoints ───────────────────────────
-from agents.task_store   import load_tasks
-from agents.roadmap_agent import get_stage_info
-from agents.skill_gap_agent import load_user_skills
+# ── Agent imports ─────────────────────────────────────────────────────────────
+from agents.task_store        import load_tasks
+from agents.roadmap_agent     import get_stage_info, load_roadmap
+from agents.skill_gap_agent   import load_user_skills
+from agents.trend_collector   import load_trends
+from agents.analytics_agent   import get_analytics
+from agents.user_model_agent  import get_learning_profile_summary
+from agents.mentor_chat_agent import ask_mentor, load_chat_history, clear_chat_history
 
-# ────────────────────────────────────────────────────────────────────────────
-# App setup
-# ────────────────────────────────────────────────────────────────────────────
+import asyncio
+
+# ── App setup ─────────────────────────────────────────────────────────────────
 
 app = FastAPI(
     title="AI Career Mentor API",
-    description="REST interface for the AI Career Mentor CLI system.",
-    version="1.0.0",
+    description="Full-scale REST interface for the AI Career Mentor system.",
+    version="2.0.0",
 )
 
-# CORS — allow all origins so a future frontend (React / Vue / etc.) can connect
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -57,105 +67,90 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+USER_FILE = os.path.join(BASE_DIR, "data", "user.txt")
 
-# ── Helper ───────────────────────────────────────────────────────────────────
+@app.on_event("startup")
+async def startup_event():
+    """Run background sync tasks on boot (GitHub extraction, Trend fetching)."""
+    def _sync():
+        try:
+            from agents.github_agent import extract_skills_from_github
+            profile = _profile()
+            if profile.get('github'):
+                extract_skills_from_github(profile['github'], profile['goal'])
+        except Exception as e:
+            print(f"Startup Sync Error (GitHub): {e}")
+            
+        try:
+            from agents.trend_collector import collect_trends
+            collect_trends()
+        except Exception as e:
+            print(f"Startup Sync Error (Trends): {e}")
+
+    # Run sync in background so it doesn't block server startup
+    asyncio.create_task(asyncio.to_thread(_sync))
+
+# ── Request models ────────────────────────────────────────────────────────────
+
+class ChatRequest(BaseModel):
+    message: str
+    history: list = []   # list of {role, content} — optional, overrides stored
+
+class ProfileUpdateRequest(BaseModel):
+    name: str | None = None
+    goal: str | None = None
+    github: str | None = None
+
+
+# ── Helper ────────────────────────────────────────────────────────────────────
 
 def _profile() -> dict:
-    """Loads the user profile once per request."""
     return load_user_profile()
 
 
-# ────────────────────────────────────────────────────────────────────────────
-# Endpoints
-# ────────────────────────────────────────────────────────────────────────────
+# ── Endpoints ─────────────────────────────────────────────────────────────────
 
-@app.get("/profile", summary="Get user profile and career progress")
+@app.get("/profile")
 def get_profile():
-    """
-    Returns the current user profile, skills, overall career progress,
-    current roadmap stage, and stage-level progress.
-
-    Example response:
-    ```json
-    {
-      "name": "Aryan",
-      "goal": "AI/ML Engineer",
-      "skills": {"Python": "intermediate", "PyTorch": "none"},
-      "career_progress": 40,
-      "current_stage": "Intermediate",
-      "stage_progress": 60
-    }
-    ```
-    """
-    profile = _profile()
-    return get_current_state(profile)
+    """User profile, skills, career progress, roadmap stage."""
+    return get_current_state(_profile())
 
 
-@app.get("/tasks", summary="Get all tasks")
+@app.get("/tasks")
 def get_tasks():
-    """
-    Returns all tasks (pending + completed) loaded from tasks.json.
-
-    Example response:
-    ```json
-    {
-      "tasks": [
-        {"id": 1, "skill": "PyTorch", "task": "...", "status": "pending"},
-        ...
-      ]
-    }
-    ```
-    """
-    tasks = load_tasks()
-    return {"tasks": tasks}
+    """All tasks (pending + completed)."""
+    return {"tasks": load_tasks()}
 
 
-@app.post("/generate", summary="Generate new tasks")
+@app.post("/generate")
 def generate_tasks():
-    """
-    Runs the full task generation pipeline:
-    loads skills → detects gaps → calls the LLM → saves tasks.json.
-
-    Returns the updated task list.
-
-    Example response:
-    ```json
-    {
-      "message": "Tasks generated",
-      "tasks": [...]
-    }
-    ```
-    """
-    profile   = _profile()
-    all_tasks = generate_tasks_pipeline(profile)
-    return {
-        "message": "Tasks generated",
-        "tasks":   all_tasks,
-    }
+    """Run the full generation pipeline and return updated task list."""
+    all_tasks = generate_tasks_pipeline(_profile())
+    return {"message": "Tasks generated", "tasks": all_tasks}
 
 
-@app.post("/complete/{task_id}", summary="Mark a task as complete")
+@app.post("/complete/{task_id}")
 def complete_task(task_id: int):
-    """
-    Marks the task with the given **task_id** as completed, upgrades the
-    relevant skill, then replans (generates new tasks if needed).
-
-    Returns the updated task list and updated skills.
-
-    Example response:
-    ```json
-    {
-      "message": "Task completed",
-      "updated_tasks": [...],
-      "updated_skills": {"Python": "intermediate", ...}
-    }
-    ```
-    """
+    """Mark task as complete, upgrade skill, replan."""
     profile = _profile()
     result  = complete_task_pipeline(task_id, profile)
 
     if "error" in result:
         raise HTTPException(status_code=404, detail=result["error"])
+
+    # Record completion in learning profile
+    try:
+        from agents.user_model_agent import record_task_completion
+        record_task_completion(result["completed_task"])
+    except Exception:
+        pass
+
+    # Refresh analytics
+    try:
+        from agents.analytics_agent import compute_analytics
+        compute_analytics()
+    except Exception:
+        pass
 
     return {
         "message":        "Task completed",
@@ -165,27 +160,170 @@ def complete_task(task_id: int):
     }
 
 
-@app.get("/roadmap", summary="Get current roadmap stage")
+@app.get("/roadmap")
 def get_roadmap():
-    """
-    Returns the user's current roadmap stage, progress within that stage,
-    and the full skills dictionary.
-
-    Example response:
-    ```json
-    {
-      "current_stage": "Intermediate",
-      "stage_progress": 60,
-      "skills": {"Python": "intermediate", "PyTorch": "none"}
-    }
-    ```
-    """
+    """Current roadmap stage and progress (legacy endpoint)."""
     profile     = _profile()
     user_skills = load_user_skills()
     roadmap     = get_stage_info(profile["goal"], user_skills)
-
     return {
         "current_stage":  roadmap["current_stage"],
         "stage_progress": roadmap["progress_pct"],
         "skills":         user_skills,
     }
+
+
+@app.get("/roadmap/full")
+def get_full_roadmap():
+    """
+    Full multi-stage roadmap for the user's current goal.
+    Returns all stages with skill-level annotations and progress per stage.
+    """
+    profile     = _profile()
+    goal        = profile["goal"]
+    user_skills = load_user_skills()
+    all_roadmaps = load_roadmap()
+    goal_roadmap = all_roadmaps.get(goal, {})
+    user_skills_lower = {k.lower(): v.lower() for k, v in user_skills.items()}
+
+    stages_detail = []
+    for stage_name, skills in goal_roadmap.items():
+        skill_details = []
+        learned = 0
+        for skill in skills:
+            level = user_skills_lower.get(skill.lower(), "none")
+            if level != "none":
+                learned += 1
+            skill_details.append({"name": skill, "level": level})
+        total = len(skills)
+        progress = int((learned / total) * 100) if total > 0 else 0
+        is_complete = learned == total
+
+        stages_detail.append({
+            "name":       stage_name,
+            "skills":     skill_details,
+            "progress":   progress,
+            "complete":   is_complete,
+            "total":      total,
+            "learned":    learned,
+        })
+
+    # Mark current stage
+    current_stage_info = get_stage_info(goal, user_skills)
+    current_stage_name = current_stage_info["current_stage"]
+
+    return {
+        "goal":          goal,
+        "current_stage": current_stage_name,
+        "stages":        stages_detail,
+        "all_goals":     list(all_roadmaps.keys()),
+    }
+
+
+@app.get("/trends")
+def get_trends():
+    """
+    Enriched trend feed: trending skills with relevance to the user's goal.
+    """
+    profile     = _profile()
+    goal        = profile["goal"]
+    user_skills = load_user_skills()
+    skills_lower = {k.lower() for k in user_skills.keys()}
+    trends_raw   = load_trends()
+
+    enriched = []
+    for item in trends_raw:
+        if isinstance(item, str):
+            name = item
+        elif isinstance(item, dict):
+            name = item.get("name", "")
+        else:
+            continue
+
+        # Compute relevance to goal and current skills
+        name_lower = name.lower()
+        already_known = any(name_lower in s or s in name_lower for s in skills_lower)
+        is_gap = not already_known
+
+        enriched.append({
+            "name":         name,
+            "already_known": already_known,
+            "is_gap":        is_gap,
+            "relevance":     "high" if is_gap else "building",
+        })
+
+    return {"trends": enriched, "goal": goal}
+
+
+@app.get("/analytics")
+def get_analytics_endpoint():
+    """
+    Real-world readiness score, skill depth breakdown, career trajectory,
+    trend alignment, and readiness history.
+    """
+    try:
+        analytics = get_analytics()
+        return analytics
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.get("/learning-profile")
+def get_learning_profile():
+    """Digital twin data: learning velocity, consistency, confidence history."""
+    try:
+        profile = get_learning_profile_summary()
+        return profile
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.post("/mentor/chat")
+def mentor_chat(req: ChatRequest):
+    """
+    Conversational AI mentor. Sends user message with context and returns response.
+    Optionally pass history to override server-side stored history.
+    """
+    try:
+        # Use provided history if non-empty, else load from file
+        history = req.history if req.history else None
+        result  = ask_mentor(req.message, history=history)
+        return {
+            "response":        result["response"],
+            "suggestions":     result["suggestions"],
+            "history":         result["updated_history"],
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.post("/mentor/clear")
+def mentor_clear():
+    """Clears the stored mentor conversation history."""
+    clear_chat_history()
+    return {"message": "Conversation history cleared."}
+
+
+@app.get("/mentor/history")
+def mentor_history():
+    """Returns the stored mentor conversation history."""
+    return {"history": load_chat_history()}
+
+
+@app.post("/profile/update")
+def update_profile(req: ProfileUpdateRequest):
+    """Update user name, goal, or github handle in user.txt."""
+    current = _profile()
+    name   = req.name   if req.name   is not None else current["name"]
+    goal   = req.goal   if req.goal   is not None else current["goal"]
+    github = req.github if req.github is not None else current["github"]
+
+    try:
+        os.makedirs(os.path.dirname(USER_FILE), exist_ok=True)
+        with open(USER_FILE, "w") as f:
+            f.write(f"Name: {name}\n")
+            f.write(f"Goal: {goal}\n")
+            f.write(f"GitHub: {github}\n")
+        return {"message": "Profile updated", "name": name, "goal": goal, "github": github}
+    except OSError as e:
+        raise HTTPException(status_code=500, detail=str(e))

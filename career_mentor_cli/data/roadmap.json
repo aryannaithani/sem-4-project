@@ -7,12 +7,107 @@
     ],
     "Intermediate": [
       "Deep Learning",
-      "Data Engineering"
+      "Data Engineering",
+      "PyTorch"
     ],
     "Advanced": [
       "Vector Databases",
       "Model Deployment",
-      "LLM Systems"
+      "LLM Systems",
+      "Transformers"
+    ],
+    "Expert": [
+      "MLOps",
+      "Reinforcement Learning",
+      "Multimodal AI"
+    ]
+  },
+  "Data Scientist": {
+    "Foundations": [
+      "Python",
+      "Statistics",
+      "Data Engineering"
+    ],
+    "Intermediate": [
+      "Machine Learning",
+      "Feature Engineering",
+      "Data Visualization"
+    ],
+    "Advanced": [
+      "Deep Learning",
+      "Experiment Design",
+      "Causal Inference"
+    ],
+    "Expert": [
+      "MLOps",
+      "NLP",
+      "Time Series Forecasting"
+    ]
+  },
+  "MLOps Engineer": {
+    "Foundations": [
+      "Python",
+      "Linux & Shell",
+      "Docker"
+    ],
+    "Intermediate": [
+      "Kubernetes",
+      "CI/CD Pipelines",
+      "Model Deployment"
+    ],
+    "Advanced": [
+      "MLOps",
+      "Feature Stores",
+      "Drift Detection"
+    ],
+    "Expert": [
+      "Distributed Training",
+      "LLM Serving",
+      "Platform Engineering"
+    ]
+  },
+  "Full-Stack Engineer": {
+    "Foundations": [
+      "JavaScript",
+      "HTML & CSS",
+      "React"
+    ],
+    "Intermediate": [
+      "Node.js",
+      "REST APIs",
+      "Databases"
+    ],
+    "Advanced": [
+      "System Design",
+      "Cloud Services",
+      "Performance Optimization"
+    ],
+    "Expert": [
+      "Microservices",
+      "DevOps",
+      "Security Engineering"
+    ]
+  },
+  "Software Engineer": {
+    "Foundations": [
+      "Python",
+      "Data Structures & Algorithms",
+      "Object-Oriented Programming"
+    ],
+    "Intermediate": [
+      "System Design",
+      "Databases",
+      "REST APIs"
+    ],
+    "Advanced": [
+      "Distributed Systems",
+      "Cloud Services",
+      "Performance Engineering"
+    ],
+    "Expert": [
+      "Architecture Design",
+      "Security Engineering",
+      "Open Source Leadership"
     ]
   }
 }

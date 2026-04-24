@@ -1,37 +1,56 @@
-import axios from 'axios';
+// api.js — All API calls for the AI Career Mentor frontend
 
-const API_BASE_URL = 'http://127.0.0.1:8000'; // Target FastAPI backend
+const BASE = 'http://localhost:8000';
 
-const api = axios.create({
-    baseURL: API_BASE_URL,
-    headers: {
-        'Content-Type': 'application/json',
-    },
-});
+async function request(path, options = {}) {
+    const res = await fetch(`${BASE}${path}`, {
+        headers: { 'Content-Type': 'application/json' },
+        ...options,
+    });
+    if (!res.ok) {
+        const err = await res.json().catch(() => ({ detail: res.statusText }));
+        throw new Error(err.detail || res.statusText);
+    }
+    return res.json();
+}
 
-export const getProfile = async () => {
-    const response = await api.get('/profile');
-    return response.data;
-};
+// ── Profile ──────────────────────────────────────────────────
+export const getProfile = () => request('/profile');
 
-export const getTasks = async () => {
-    const response = await api.get('/tasks');
-    return response.data.tasks;
-};
+export const updateProfile = (data) =>
+    request('/profile/update', { method: 'POST', body: JSON.stringify(data) });
 
-export const generateTasks = async () => {
-    const response = await api.post('/generate');
-    return response.data;
-};
+// ── Tasks ────────────────────────────────────────────────────
+export const getTasks = () => request('/tasks');
 
-export const completeTask = async (taskId) => {
-    const response = await api.post(`/complete/${taskId}`);
-    return response.data;
-};
+export const generateTasks = () =>
+    request('/generate', { method: 'POST' });
 
-export const getRoadmap = async () => {
-    const response = await api.get('/roadmap');
-    return response.data;
-};
+export const completeTask = (id) =>
+    request(`/complete/${id}`, { method: 'POST' });
 
-export default api;
+// ── Roadmap ──────────────────────────────────────────────────
+export const getRoadmap = () => request('/roadmap');
+
+export const getFullRoadmap = () => request('/roadmap/full');
+
+// ── Trends ───────────────────────────────────────────────────
+export const getTrends = () => request('/trends');
+
+// ── Analytics ────────────────────────────────────────────────
+export const getAnalytics = () => request('/analytics');
+
+// ── Learning Profile (Digital Twin) ──────────────────────────
+export const getLearningProfile = () => request('/learning-profile');
+
+// ── Mentor Chat ───────────────────────────────────────────────
+export const sendMentorMessage = (message, history = []) =>
+    request('/mentor/chat', {
+        method: 'POST',
+        body: JSON.stringify({ message, history }),
+    });
+
+export const getMentorHistory = () => request('/mentor/history');
+
+export const clearMentorHistory = () =>
+    request('/mentor/clear', { method: 'POST' });

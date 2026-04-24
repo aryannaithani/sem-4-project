@@ -1,0 +1,97 @@
+{
+  "last_updated": "2026-04-24T18:08:43.761896+00:00",
+  "real_world_readiness": 37,
+  "skill_depth_breakdown": {
+    "Python": {
+      "level": "advanced",
+      "depth": "deep",
+      "confidence": null
+    },
+    "Machine Learning": {
+      "level": "advanced",
+      "depth": "deep",
+      "confidence": null
+    },
+    "Deep Learning": {
+      "level": "beginner",
+      "depth": "surface",
+      "confidence": null
+    },
+    "Vector Databases": {
+      "level": "beginner",
+      "depth": "surface",
+      "confidence": null
+    },
+    "Model Deployment": {
+      "level": "intermediate",
+      "depth": "developing",
+      "confidence": null
+    },
+    "Data Engineering": {
+      "level": "beginner",
+      "depth": "surface",
+      "confidence": null
+    },
+    "LLM Systems": {
+      "level": "advanced",
+      "depth": "deep",
+      "confidence": null
+    },
+    "Reinforcement Learning": {
+      "level": "beginner",
+      "depth": "surface",
+      "confidence": null
+    },
+    "JavaScript": {
+      "level": "beginner",
+      "depth": "surface",
+      "confidence": null
+    },
+    "MLOps": {
+      "level": "beginner",
+      "depth": "surface",
+      "confidence": null
+    },
+    "PyTorch": {
+      "level": "beginner",
+      "depth": "surface",
+      "confidence": null
+    },
+    "Transformers": {
+      "level": "beginner",
+      "depth": "surface",
+      "confidence": null
+    },
+    "Statistics & Probability": {
+      "level": "intermediate",
+      "depth": "developing",
+      "confidence": null
+    },
+    "Statistics": {
+      "level": "advanced",
+      "depth": "deep",
+      "confidence": null
+    }
+  },
+  "career_trajectory": "starting",
+  "trend_alignment_score": 28,
+  "readiness_history": [
+    {
+      "date": "2026-04-24",
+      "score": 37
+    }
+  ],
+  "top_strength_skills": [
+    "Python",
+    "Machine Learning",
+    "LLM Systems",
+    "Statistics"
+  ],
+  "highest_priority_gaps": [
+    "Vector Databases",
+    "Data Engineering",
+    "MLOps",
+    "Deep Learning",
+    "Reinforcement Learning"
+  ]
+}
