@@ -1,5 +1,5 @@
 {
-  "last_updated": "2026-04-24T18:08:43.761896+00:00",
+  "last_updated": "2026-05-05T18:43:17.120527+00:00",
   "real_world_readiness": 37,
   "skill_depth_breakdown": {
     "Python": {
@@ -73,11 +73,15 @@
       "confidence": null
     }
   },
-  "career_trajectory": "starting",
+  "career_trajectory": "steady",
   "trend_alignment_score": 28,
   "readiness_history": [
     {
       "date": "2026-04-24",
+      "score": 37
+    },
+    {
+      "date": "2026-05-05",
       "score": 37
     }
   ],
