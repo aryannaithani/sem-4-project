@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { getAnalytics } from '../api';
-import { Activity, Target, TrendingUp, Layers, AlertCircle, CheckCircle } from 'lucide-react';
+import { CheckCircle, AlertCircle } from 'lucide-react';
 
 const Analytics = () => {
     const [analytics, setAnalytics] = useState(null);
@@ -13,26 +13,14 @@ const Analytics = () => {
             .finally(() => setLoading(false));
     }, []);
 
-    if (loading) {
-        return (
-            <div className="p-4 md:p-8 w-full h-full flex flex-col justify-center items-center gap-4">
-                <div className="w-12 h-12 border-4 border-white/10 border-t-violet-500 rounded-full animate-spin shadow-[0_0_15px_rgba(124,58,237,0.5)]"></div>
-                <div className="text-slate-400 font-medium animate-pulse">Loading analytics...</div>
-            </div>
-        );
-    }
+    if (loading) return <div className="muted">Loading analytics...</div>;
 
     if (!analytics) {
         return (
-            <div className="p-4 md:p-8 w-full h-full flex justify-center items-center">
-                <div className="card max-w-md w-full p-8 text-center shadow-2xl border-white/10">
-                    <div className="w-16 h-16 bg-red-500/10 rounded-full flex items-center justify-center mx-auto mb-4 border border-red-500/20 text-red-400">
-                        <AlertCircle size={28} />
-                    </div>
-                    <h2 className="text-xl font-bold text-white mb-2">Analytics Unavailable</h2>
-                    <p className="text-slate-400 text-sm mb-6">Could not retrieve analytics. Ensure the backend is active.</p>
-                    <button onClick={() => window.location.reload()} className="btn btn-secondary w-full justify-center">Try Again</button>
-                </div>
+            <div className="panel p-6">
+                <h2 className="title-lg">Analytics unavailable</h2>
+                <p className="muted mt-2">Could not retrieve analytics data from backend.</p>
+                <button onClick={() => window.location.reload()} className="btn mt-4">Try again</button>
             </div>
         );
     }
@@ -50,63 +38,36 @@ const Analytics = () => {
     }).join(' ');
 
     return (
-        <div className="p-8 max-w-6xl mx-auto w-full animate-fade-up">
-            <header className="mb-10">
-                <h1 className="text-3xl font-extrabold text-white mb-2 flex items-center gap-3">
-                    <Activity className="text-violet-500" size={32} />
-                    Career Analytics
-                </h1>
-                <p className="text-slate-400">Deep insights into your real-world readiness and trajectory.</p>
+        <div>
+            <header className="mb-6">
+                <h1 className="title-xl">Career Analytics</h1>
+                <p className="muted mt-2">Quantitative perspective on progress and skill maturity.</p>
             </header>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8 stagger">
-                <div className="stat-card">
-                    <div className="text-xs font-bold uppercase tracking-wider text-emerald-400 mb-2 flex items-center gap-2">
-                        <Target size={16} /> Readiness
-                    </div>
-                    <div className="text-4xl font-extrabold text-white">
-                        {analytics.real_world_readiness}%
-                    </div>
-                    <p className="text-xs text-slate-400 mt-2">Overall preparedness score</p>
+            <div className="grid-cards md:grid-cols-3 mb-4">
+                <div className="panel kpi">
+                    <div className="muted text-xs uppercase">Readiness</div>
+                    <div className="kpi-value">{analytics.real_world_readiness}%</div>
                 </div>
-
-                <div className="stat-card">
-                    <div className="text-xs font-bold uppercase tracking-wider text-blue-400 mb-2 flex items-center gap-2">
-                        <TrendingUp size={16} /> Trajectory
-                    </div>
-                    <div className="text-2xl font-bold text-white capitalize mt-2">
-                        {analytics.career_trajectory}
-                    </div>
-                    <p className="text-xs text-slate-400 mt-2">Based on recent activity</p>
+                <div className="panel kpi">
+                    <div className="muted text-xs uppercase">Trajectory</div>
+                    <div className="kpi-value text-2xl capitalize">{analytics.career_trajectory}</div>
                 </div>
-
-                <div className="stat-card">
-                    <div className="text-xs font-bold uppercase tracking-wider text-orange-400 mb-2 flex items-center gap-2">
-                        <Layers size={16} /> Alignment
-                    </div>
-                    <div className="text-3xl font-extrabold text-white mt-1">
-                        {analytics.trend_alignment_score}%
-                    </div>
-                    <p className="text-xs text-slate-400 mt-2">Skills aligned with trends</p>
+                <div className="panel kpi">
+                    <div className="muted text-xs uppercase">Trend alignment</div>
+                    <div className="kpi-value">{analytics.trend_alignment_score}%</div>
                 </div>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 stagger">
-                {/* Trajectory Graph */}
-                <div className="lg:col-span-2 card p-8">
-                    <h2 className="text-lg font-bold text-white mb-6">Readiness Trajectory</h2>
+            <div className="grid lg:grid-cols-3 gap-4">
+                <div className="lg:col-span-2 panel p-6">
+                    <h2 className="title-lg mb-4">Readiness Trajectory</h2>
                     {history.length > 1 ? (
-                        <div className="w-full h-48 relative border-b border-l border-white/10">
+                        <div className="w-full h-48 border border-[#24242a] rounded">
                             <svg className="w-full h-full overflow-visible" preserveAspectRatio="none" viewBox="0 0 100 100">
-                                <defs>
-                                    <linearGradient id="lineGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-                                        <stop offset="0%" stopColor="#7c3aed" />
-                                        <stop offset="100%" stopColor="#3b82f6" />
-                                    </linearGradient>
-                                </defs>
                                 <polyline
                                     fill="none"
-                                    stroke="url(#lineGrad)"
+                                    stroke="#ffffff"
                                     strokeWidth="3"
                                     strokeLinecap="round"
                                     strokeLinejoin="round"
@@ -121,8 +82,8 @@ const Analytics = () => {
                                             cx={x}
                                             cy={y}
                                             r="2.5"
-                                            fill="#0d1117"
-                                            stroke="#3b82f6"
+                                            fill="#0d0d10"
+                                            stroke="#ffffff"
                                             strokeWidth="1.5"
                                         >
                                             <title>{h.date.substring(0, 10)}: {h.score}%</title>
@@ -132,28 +93,25 @@ const Analytics = () => {
                             </svg>
                         </div>
                     ) : (
-                        <div className="h-48 flex items-center justify-center text-slate-500 text-sm">
+                        <div className="h-48 flex items-center justify-center muted text-sm">
                             Need more data points to show trajectory. Keep completing tasks!
                         </div>
                     )}
                 </div>
 
-                {/* Depth Breakdown */}
-                <div className="card p-6 flex flex-col">
-                    <h2 className="text-lg font-bold text-white mb-4">Skill Depth</h2>
-                    <div className="flex-1 space-y-4 overflow-y-auto pr-2">
+                <div className="panel p-6">
+                    <h2 className="title-lg mb-4">Skill Depth</h2>
+                    <div className="space-y-3 max-h-[20rem] overflow-auto">
                         {Object.entries(analytics.skill_depth_breakdown || {}).length === 0 ? (
-                            <p className="text-slate-500 text-sm">No skills tracked yet.</p>
+                            <p className="muted text-sm">No skills tracked yet.</p>
                         ) : (
                             Object.entries(analytics.skill_depth_breakdown).map(([skill, info], idx) => (
-                                <div key={idx} className="flex flex-col gap-1 border-b border-white/5 pb-2">
+                                <div key={idx} className="border-b border-[#222229] pb-2">
                                     <div className="flex justify-between items-center text-sm">
-                                        <span className="font-semibold text-slate-200">{skill}</span>
-                                        {info.depth === 'deep' && <span className="badge badge-advanced">Deep</span>}
-                                        {info.depth === 'developing' && <span className="badge badge-blue">Developing</span>}
-                                        {info.depth === 'surface' && <span className="badge badge-intermediate">Surface</span>}
+                                        <span className="font-semibold">{skill}</span>
+                                        <span className="chip">{info.depth}</span>
                                     </div>
-                                    <div className="flex justify-between items-center text-xs text-slate-400">
+                                    <div className="flex justify-between items-center text-xs muted">
                                         <span className="capitalize">{info.level}</span>
                                         {info.confidence ? <span>Conf: {info.confidence}/5</span> : <span>No conf</span>}
                                     </div>
@@ -164,37 +122,37 @@ const Analytics = () => {
                 </div>
             </div>
 
-            <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6 stagger">
-                <div className="card-glass p-6 border-emerald-500/20 max-h-64 overflow-y-auto">
-                    <h3 className="text-sm font-bold uppercase tracking-wider text-emerald-400 mb-4 flex items-center gap-2">
+            <div className="mt-4 grid md:grid-cols-2 gap-4">
+                <div className="panel p-6 max-h-64 overflow-y-auto">
+                    <h3 className="text-sm font-bold uppercase tracking-wider mb-4 flex items-center gap-2">
                         <CheckCircle size={16} /> Top Strengths
                     </h3>
                     <div className="flex flex-wrap gap-2">
                         {analytics.top_strength_skills?.length > 0 ? (
                             analytics.top_strength_skills.map((s, i) => (
-                                <span key={i} className="px-3 py-1.5 bg-emerald-500/10 text-emerald-300 border border-emerald-500/20 rounded-md text-sm font-medium">
+                                <span key={i} className="chip">
                                     {s}
                                 </span>
                             ))
                         ) : (
-                            <span className="text-slate-500 text-sm">No deep strengths identified yet.</span>
+                            <span className="muted text-sm">No deep strengths identified yet.</span>
                         )}
                     </div>
                 </div>
 
-                <div className="card-glass p-6 border-orange-500/20 max-h-64 overflow-y-auto">
-                    <h3 className="text-sm font-bold uppercase tracking-wider text-orange-400 mb-4 flex items-center gap-2">
+                <div className="panel p-6 max-h-64 overflow-y-auto">
+                    <h3 className="text-sm font-bold uppercase tracking-wider mb-4 flex items-center gap-2">
                         <AlertCircle size={16} /> Highest Priority Gaps
                     </h3>
                     <div className="flex flex-wrap gap-2">
                         {analytics.highest_priority_gaps?.length > 0 ? (
                             analytics.highest_priority_gaps.map((s, i) => (
-                                <span key={i} className="px-3 py-1.5 bg-orange-500/10 text-orange-300 border border-orange-500/20 rounded-md text-sm font-medium">
+                                <span key={i} className="chip">
                                     {s}
                                 </span>
                             ))
                         ) : (
-                            <span className="text-slate-500 text-sm">No critical gaps identified right now.</span>
+                            <span className="muted text-sm">No critical gaps identified right now.</span>
                         )}
                     </div>
                 </div>

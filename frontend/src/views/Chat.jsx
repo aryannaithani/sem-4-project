@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { sendMentorMessage, getMentorHistory, clearMentorHistory } from '../api';
-import { Send, Bot, User, Trash2, Zap } from 'lucide-react';
+import { Send, Bot, User, Trash2 } from 'lucide-react';
 import { clsx } from 'clsx';
 
 const Chat = () => {
@@ -61,25 +61,25 @@ const Chat = () => {
     };
 
     return (
-        <div className="w-full h-full max-h-[100vh] flex flex-col py-8 px-4 md:px-8 mx-auto max-w-5xl animate-fade-in relative z-10">
-            <header className="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-6 shrink-0 gap-4">
+        <div>
+            <header className="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-4 gap-4">
                 <div>
-                    <h1 className="text-3xl font-extrabold text-white mb-2 flex items-center gap-3">
-                        <Bot className="text-violet-500" size={32} />
+                    <h1 className="title-xl flex items-center gap-3">
+                        <Bot size={28} />
                         Conversational Mentor
                     </h1>
-                    <p className="text-slate-400">Ask your digital-twin-powered mentor anything.</p>
+                    <p className="muted mt-2">Focused career guidance for advanced learners.</p>
                 </div>
                 <button
                     onClick={handleClear}
-                    className="btn btn-ghost border border-white/5 hover:bg-red-500/10 text-red-400 hover:text-red-300 transition-colors uppercase tracking-wider text-xs font-bold"
+                    className="btn text-xs"
                 >
                     <Trash2 size={16} /> Clear History
                 </button>
             </header>
 
-            <div className="flex-1 overflow-hidden flex flex-col bg-[#0d1117]/90 rounded-2xl shadow-xl border border-white/5 backdrop-blur-xl relative">
-                <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-6 scroll-area">
+            <div className="panel overflow-hidden flex flex-col min-h-[70vh]">
+                <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-6">
                     {messages.map((m, idx) => {
                         const isUser = m.role === 'user';
                         return (
@@ -87,18 +87,18 @@ const Chat = () => {
                                 <div className={clsx("flex gap-4 max-w-[80%]", isUser ? "flex-row-reverse" : "flex-row")}>
                                     <div className="shrink-0 mt-1">
                                         {isUser ? (
-                                            <div className="w-8 h-8 rounded-full bg-violet-600 flex justify-center items-center">
-                                                <User size={16} className="text-white" />
+                                            <div className="w-8 h-8 rounded-full bg-white flex justify-center items-center">
+                                                <User size={16} className="text-black" />
                                             </div>
                                         ) : (
-                                            <div className="w-8 h-8 rounded-full bg-[#1e293b] border border-white/10 flex justify-center items-center shadow-glow">
-                                                <Bot size={16} className="text-violet-400" />
+                                            <div className="w-8 h-8 rounded-full bg-[#19191d] border border-[#2a2a30] flex justify-center items-center">
+                                                <Bot size={16} className="text-white" />
                                             </div>
                                         )}
                                     </div>
                                     <div className={clsx(
-                                        "px-5 py-4 whitespace-pre-wrap leading-relaxed shadow-md",
-                                        isUser ? "bg-violet-600/90 text-white rounded-2xl rounded-tr-sm" : "bg-[#182030] text-slate-200 border border-white/5 rounded-2xl rounded-tl-sm"
+                                        "px-5 py-4 whitespace-pre-wrap leading-relaxed",
+                                        isUser ? "bg-white text-black rounded-2xl rounded-tr-sm" : "bg-[#111116] border border-[#28282e] rounded-2xl rounded-tl-sm"
                                     )}>
                                         {m.content}
                                     </div>
@@ -111,14 +111,14 @@ const Chat = () => {
                         <div className="flex w-full justify-start">
                             <div className="flex gap-4 max-w-3xl">
                                 <div className="shrink-0 mt-1">
-                                    <div className="w-8 h-8 rounded-full bg-[#1e293b] border border-white/10 flex justify-center items-center shadow-glow">
-                                        <Bot size={16} className="text-violet-400" />
+                                    <div className="w-8 h-8 rounded-full bg-[#19191d] border border-[#2a2a30] flex justify-center items-center">
+                                        <Bot size={16} className="text-white" />
                                     </div>
                                 </div>
-                                <div className="px-5 py-5 bg-[#182030] text-slate-200 border border-white/5 rounded-2xl rounded-tl-sm flex items-center gap-1.5 h-12">
-                                    <div className="typing-dot"></div>
-                                    <div className="typing-dot"></div>
-                                    <div className="typing-dot"></div>
+                                <div className="px-5 py-5 bg-[#111116] border border-[#28282e] rounded-2xl rounded-tl-sm flex items-center gap-1.5 h-12">
+                                    <div className="w-2 h-2 rounded-full bg-white/60 animate-pulse"></div>
+                                    <div className="w-2 h-2 rounded-full bg-white/60 animate-pulse"></div>
+                                    <div className="w-2 h-2 rounded-full bg-white/60 animate-pulse"></div>
                                 </div>
                             </div>
                         </div>
@@ -127,16 +127,13 @@ const Chat = () => {
                 </div>
 
                 {suggestions.length > 0 && !loading && (
-                    <div className="px-6 pb-2 pt-2 flex flex-wrap gap-2 animate-fade-up shrink-0">
-                        <div className="flex items-center gap-2 w-full mb-1">
-                            <Zap size={14} className="text-orange-400" />
-                            <span className="text-xs font-bold uppercase tracking-wider text-slate-400">Suggestions</span>
-                        </div>
+                    <div className="px-6 pb-2 pt-2 flex flex-wrap gap-2">
+                        <span className="text-xs font-bold uppercase tracking-wider muted w-full">Suggestions</span>
                         {suggestions.map((sug, i) => (
                             <button
                                 key={i}
                                 onClick={() => handleSend(sug)}
-                                className="px-4 py-2 bg-white/5 hover:bg-white/10 text-sm text-slate-300 rounded-full border border-white/10 transition-colors whitespace-nowrap overflow-hidden text-ellipsis max-w-full"
+                                className="chip"
                             >
                                 {sug}
                             </button>
@@ -144,19 +141,19 @@ const Chat = () => {
                     </div>
                 )}
 
-                <div className="p-4 sm:p-5 border-t border-white/5 bg-black/40 shrink-0">
+                <div className="p-4 sm:p-5 border-t border-[#232328] bg-[#0d0d10]">
                     <form
                         onSubmit={(e) => { e.preventDefault(); handleSend(); }}
                         className="flex gap-4 relative w-full items-center"
                     >
-                        <div className="relative flex-1 group">
+                        <div className="relative flex-1">
                             <input
                                 type="text"
                                 value={input}
                                 autoFocus
                                 onChange={(e) => setInput(e.target.value)}
                                 placeholder="Message your mentor..."
-                                className="w-full bg-[#1e293b]/50 border border-white/10 rounded-xl focus:border-violet-500 focus:bg-[#1e293b]/80 focus:ring-1 focus:ring-violet-500 py-4 pl-5 pr-14 shadow-inner text-[15px] text-white transition-all outline-none"
+                                className="w-full bg-[#17171b] border border-[#2a2a31] rounded-xl py-4 pl-5 pr-14 text-[15px] text-white transition-all outline-none"
                                 disabled={loading}
                             />
                             <button
@@ -164,7 +161,7 @@ const Chat = () => {
                                 disabled={!input.trim() || loading}
                                 className={clsx(
                                     "absolute right-2 top-2 bottom-2 w-10 sm:w-12 flex items-center justify-center rounded-lg transition-all",
-                                    input.trim() && !loading ? "bg-violet-600 text-white shadow-glow hover:bg-violet-500" : "bg-white/5 text-slate-500 opacity-50 cursor-not-allowed"
+                                    input.trim() && !loading ? "bg-white text-black hover:bg-[#f1f1f1]" : "bg-[#232328] text-[#666] opacity-50 cursor-not-allowed"
                                 )}
                             >
                                 <Send size={18} className={input.trim() ? "ml-0.5" : ""} />

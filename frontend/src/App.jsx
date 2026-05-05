@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import Sidebar from './components/Sidebar';
 import Dashboard from './views/Dashboard';
 import TaskBoard from './views/TaskBoard';
@@ -14,7 +14,7 @@ function App() {
     switch (currentView) {
       case 'dashboard': return <Dashboard setCurrentView={setCurrentView} />;
       case 'tasks': return <TaskBoard />;
-      case 'roadmap': return <Roadmap />;
+      case 'roadmap': return <Roadmap setCurrentView={setCurrentView} />;
       case 'profile': return <Profile />;
       case 'chat': return <Chat />;
       case 'analytics': return <Analytics />;
@@ -23,12 +23,10 @@ function App() {
   };
 
   return (
-    <div className="flex h-screen w-full overflow-hidden" style={{ background: 'var(--bg-base)' }}>
+    <div className="app-shell">
       <Sidebar currentView={currentView} setCurrentView={setCurrentView} />
-      <main className="flex-1 min-w-0 h-full overflow-y-auto scroll-area relative">
-        <div className="w-full min-h-full">
-          {renderView()}
-        </div>
+      <main className="main-content">
+        <div className="container">{renderView()}</div>
       </main>
     </div>
   );
