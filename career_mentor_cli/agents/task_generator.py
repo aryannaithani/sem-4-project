@@ -151,7 +151,7 @@ Current Stage: {current_stage or "Not determined"}
 {projects_str}
 
 === TASK GENERATION RULES (FOLLOW STRICTLY) ===
-1. DO NOT generate generic tasks like "Learn X" or "Study X". Every task must be specific and actionable.
+1. Keep the "Task" and "Reason" fields EXTREMELY short and concise. Long text breaks the frontend UI.
 2. EVERY task must include a concrete hands-on project or deliverable.
 3. Tasks must logically follow and build upon the completed tasks listed above. Do NOT restart from basics if the user has already covered foundational work.
 4. Tasks must match the target difficulty level for each skill (see TARGET DIFFICULTY PER SKILL above).
@@ -164,10 +164,10 @@ Generate exactly {len(skill_gaps)} tasks, one per skill gap listed above.
 
 Use this EXACT format for every task (no extra prose before or after):
 
-Task: <very specific, actionable description of what to build or do>
+Task: <Short title (max 5 words): Very short description (max 10 words)>
 Skill: <skill name from the skill gaps list>
 Difficulty: <beginner | intermediate | advanced>
-Reason: <one sentence explaining how this builds on previous work and advances the career goal>
+Reason: <Short 1-sentence reason (max 10 words)>
 
 """
     return prompt.strip()

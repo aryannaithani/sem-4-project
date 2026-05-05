@@ -1,15 +1,15 @@
 {
   "last_updated": "2026-05-05T20:15:34.270228+00:00",
-  "real_world_readiness": 37,
+  "real_world_readiness": 20,
   "skill_depth_breakdown": {
     "Python": {
-      "level": "advanced",
-      "depth": "deep",
+      "level": "intermediate",
+      "depth": "developing",
       "confidence": null
     },
     "Machine Learning": {
-      "level": "advanced",
-      "depth": "deep",
+      "level": "intermediate",
+      "depth": "developing",
       "confidence": null
     },
     "Deep Learning": {
@@ -33,8 +33,8 @@
       "confidence": null
     },
     "LLM Systems": {
-      "level": "advanced",
-      "depth": "deep",
+      "level": "intermediate",
+      "depth": "developing",
       "confidence": null
     },
     "Reinforcement Learning": {
@@ -68,21 +68,21 @@
       "confidence": null
     },
     "Statistics": {
-      "level": "advanced",
-      "depth": "deep",
+      "level": "intermediate",
+      "depth": "developing",
       "confidence": null
     }
   },
   "career_trajectory": "steady",
-  "trend_alignment_score": 28,
+  "trend_alignment_score": 15,
   "readiness_history": [
     {
       "date": "2026-04-24",
-      "score": 37
+      "score": 20
     },
     {
       "date": "2026-05-05",
-      "score": 37
+      "score": 20
     }
   ],
   "top_strength_skills": [
